@@ -1,6 +1,6 @@
 # Project Brief — Adaptive Boss AI Thesis
 
-**Document version:** 0.1
+**Document version:** 0.2
 **Author:** Luigi Turco
 **Date created:** 2025-08-20
 
@@ -126,6 +126,7 @@ This project implements and evaluates a deep reinforcement learning (DRL) driven
 ## 13. Definitions (short)
 
 * **Archetype:** a scripted player style (e.g., melee spammer).
+* **NPC:** Non Playable Character.
 * **Episode:** a single boss encounter run from entering boss room to win/lose or timeout.
 * **Policy:** trained ML agent (boss).
 
