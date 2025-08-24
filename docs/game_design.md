@@ -121,7 +121,7 @@ Enemies are deliberately simple (scripted behavior, no adaptation). Their role i
   * Prepares player for boss (visual buildup).
 
 * **Boss Room:**
-
+F
   * One adaptive boss.
   * End of run on victory or defeat.
 
@@ -131,10 +131,18 @@ Enemies are deliberately simple (scripted behavior, no adaptation). Their role i
 
 * **Weapons:**
 
-  * Longsword: medium speed, medium damage.
-  * Dagger: fast, low damage, combo potential.
-  * Bow: ranged, medium speed, piercing arrows.
-  * Staff: ranged, slow cast, elemental projectiles (fire = burn, ice = freeze).
+  * Longsword:
+    * Primary attack: cut, medium damage, medium speed.
+    * Secondary attack: thrust, high damage, slow speed.
+  * Dagger:
+    * Primary attack: cut, low damage, high speed.
+    * Secondary attack: stab, high damage, medium speed.
+  * Bow:
+    * Primary attack: shoot, medium damage, speed variable based on charge.
+    * Secondary attack: spread attack, medium damage, high speed, multiple projectiles in spread pattern.
+  * Staff:
+    * Primary attack: cast, low damage, low speed, multiple projectiles on the same line.
+    * Secondary attack: explosion, very high damage, very low speed, area damage, higher cooldown.
 
 * **Armor:** modifies movement speed and defense.
 
@@ -147,7 +155,7 @@ Enemies are deliberately simple (scripted behavior, no adaptation). Their role i
 
 ## 8. Progression & Replayability
 
-* **Rewards are randomized** (which 2–3 items appear in each choice room).
+* **Rewards are randomized** (which 2–3 items appear in each choice room, element type of weapons is randomised).
 * **Boss behavior changes** between runs due to adaptive ML policy.
 * **Short sessions** allow rapid iteration for testing and player adaptation.
 
@@ -172,7 +180,7 @@ Start → Weapon Room (fight → reward) → Armor Room (fight → reward) → H
 ## 11. Technical Assumptions
 
 * **2D top-down** perspective.
-* **Engine:** Unity (preferred) or Godot.
+* **Engine:** Godot.
 * **ML Integration:** PyTorch (training) → ONNX export → in-engine inference.
 * **Enemy AI:** simple scripted for normal enemies; DRL for boss.
 
