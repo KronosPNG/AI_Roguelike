@@ -1,8 +1,8 @@
-[gd_scene load_steps=27 format=4 uid="uid://1nf46nrhiyd1"]
+[gd_scene load_steps=26 format=4 uid="uid://1nf46nrhiyd1"]
 
 [ext_resource type="Script" uid="uid://fevwc2gvagke" path="res://scripts/Bean.cs" id="1_o5qli"]
 [ext_resource type="Texture2D" uid="uid://oq0rua0ik614" path="res://art/tileset.aseprite" id="1_sugp2"]
-[ext_resource type="Texture2D" uid="uid://2or1d0ee6o5p" path="res://art/animations/bean_sprite_sheet.png" id="2_0wfyh"]
+[ext_resource type="Texture2D" uid="uid://3a4xt78ppwt2" path="res://art/animations/bean_sprite_sheet.png" id="3_sugp2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jyhfs"]
 texture = ExtResource("1_sugp2")
@@ -37,79 +37,74 @@ texture = ExtResource("1_sugp2")
 sources/0 = SubResource("TileSetAtlasSource_jyhfs")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_trceg"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(0, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a8y0u"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(16, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jkv2x"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(32, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jbj1t"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(48, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_muem4"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(64, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dp3eg"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(80, 32, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0ld40"]
-atlas = ExtResource("2_0wfyh")
+atlas = ExtResource("3_sugp2")
 region = Rect2(96, 32, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gqmmt"]
-atlas = ExtResource("2_0wfyh")
-region = Rect2(112, 32, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yc10j"]
-atlas = ExtResource("2_0wfyh")
-region = Rect2(128, 32, 16, 16)
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_gqmmt"]
+load_path = "res://.godot/imported/bean_sprite_sheet.png-d066ea317fa7544cf3584c4460635f3b.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sugp2"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jyhfs"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tbgi4"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(0, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tefeu"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(16, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o6xl0"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(32, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tipki"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(48, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_85g3d"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(64, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_choun"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(80, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ya4ey"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(96, 16, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_eb6dy"]
-atlas = ExtResource("2_0wfyh")
+atlas = SubResource("CompressedTexture2D_gqmmt")
 region = Rect2(112, 16, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ya4ey"]
@@ -135,16 +130,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_0ld40")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_gqmmt")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yc10j")
 }],
 "loop": false,
 "name": &"dodge",
-"speed": 30.0
+"speed": 21.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -155,7 +144,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"idle",
-"speed": 2.0
+"speed": 3.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -206,9 +195,8 @@ texture_filter = 1
 position = Vector2(32, 32)
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_ya4ey")
-animation = &"dodge"
-frame = 8
-frame_progress = 1.0
+animation = &"idle"
+frame_progress = 0.376416
 metadata/_aseprite_wizard_interface_config_ = {
 "animation_section": false,
 "layer_section": true,
@@ -235,7 +223,7 @@ metadata/_aseprite_wizard_config_ = {
 metadata/_aseprite_wizard_source_file_hash_ = "e8f29a3492ff11e531f9e5072f607a06"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Bean"]
-position = Vector2(32, 32)
+position = Vector2(36, 32)
 shape = SubResource("RectangleShape2D_sgp6g")
 
 [node name="Camera2D" type="Camera2D" parent="."]

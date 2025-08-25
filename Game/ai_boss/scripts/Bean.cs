@@ -7,24 +7,18 @@ public partial class Bean : CharacterBody2D
 
 	//---- Movement Data ----
 
-	// dodging
-
 	public float BaseSpeed { get; set; } = 500f; // normal speed
 	public float SpeedModifier { get; set; } = 1f; // speed modifier
-	public float DodgeSpeed { get; set; } = 1500f;    // speed during dodge
-	public float DodgeDuration { get; set; } = 0.15f; // seconds
-	private float DodgeCooldown { get; set; } = 1f; // seconds
-	private double _lastDodgeTime = -999;
-	private Vector2 _dodgeDirection = Vector2.Right;
+	public float DodgeSpeed { get; set; } = 1500f; // speed during dodge
+	private Vector2 _dodgeDirection = Vector2.Zero;
 
 	// direction leniency
-	public float DodgeInputLeniency { get; set; } = 0.1f; // seconds to wait for input
-	private double _dodgeInputTimer = 0;
-	private bool _waitingForDodgeDirection = false;
+	public float DodgeInputLeniency { get; set; } = 0.05f; // seconds to wait for input
+	private double _dodgeInputTimer = 0; // timer for input leniency for dodging
 
 	// facing direction
 	private Vector2 _facing = Vector2.Right; // default facing direction
-	private int _lastHorizontalFacing = 1; // 1 = right, -1 = left
+	private sbyte _lastHorizontalFacing = 1; // 1 = right, -1 = left
 
 	//---- Player State ----
 	private enum PlayerState { Idle, Walking, DodgePrep, Dodge }
@@ -34,7 +28,7 @@ public partial class Bean : CharacterBody2D
 	public override void _Ready()
 	{
 		_sprite = GetNode<AnimatedSprite2D>("PlayerSprite");
-		_sprite.AnimationFinished += OnAnimationFinished;
+		_sprite.AnimationFinished += OnAnimationFinished; // Connect animation finished signal
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -57,31 +51,27 @@ public partial class Bean : CharacterBody2D
 
 	private Vector2 ReadDirection()
 	{
-		Vector2 inputDir = Vector2.Zero;
-
-		if (Input.IsActionPressed("move_right")) inputDir.X += 1;
-		if (Input.IsActionPressed("move_left")) inputDir.X -= 1;
-		if (Input.IsActionPressed("move_down")) inputDir.Y += 1;
-		if (Input.IsActionPressed("move_up")) inputDir.Y -= 1;
-
-		return inputDir.Normalized();
+		return Input.GetVector("move_left", "move_right", "move_up", "move_down"); // get already normalized direction vector
 	}
 
 	void UpdateFacing(Vector2 inputDir)
-	{
-		if (!Mathf.IsEqualApprox(inputDir.X, 0f))
-			_facing = new Vector2(inputDir.X, 0); // force pure horizontal
-
-		else if (!Mathf.IsEqualApprox(inputDir.Y, 0f))
-			_facing = new Vector2(0, inputDir.Y); // force pure vertical
-
-		else if (inputDir.Length() > 0)
-			_facing = inputDir.Normalized();
+	{	
+		_facing = inputDir;
 			
 		if (!Mathf.IsEqualApprox(_facing.X, 0))
-			_lastHorizontalFacing = Mathf.Sign(_facing.X);
+			_lastHorizontalFacing = (sbyte)Mathf.Sign(_facing.X);
 	}
 
+	// Checks if any movement keys were just pressed
+	private Vector2 MovementJustPressed()
+	{
+		if (Input.IsActionJustPressed("move_right")) return Vector2.Right;
+		if (Input.IsActionJustPressed("move_left")) return Vector2.Left;
+		if (Input.IsActionJustPressed("move_down")) return Vector2.Down;
+		if (Input.IsActionJustPressed("move_up")) return Vector2.Up;
+		return Vector2.Zero;
+
+	}
 
 	// --- State machine --------------------------
 	private void HandleStateTransitions(Vector2 input)
@@ -91,12 +81,11 @@ public partial class Bean : CharacterBody2D
 			case PlayerState.Idle:
 			case PlayerState.Walking:
 				// Dodge starts on just-pressed regardless of whether there is movement
-				if (Input.IsActionJustPressed("dodge") &&
-					Time.GetTicksMsec() / 1000.0 - _lastDodgeTime >= DodgeCooldown)
+				if (Input.IsActionJustPressed("dodge"))
 				{
 					_dodgeInputTimer = DodgeInputLeniency;
 					TransitionToState(PlayerState.DodgePrep);
-					
+
 				}
 				else
 				{
@@ -109,22 +98,30 @@ public partial class Bean : CharacterBody2D
 				break;
 
 			case PlayerState.DodgePrep:
-			
+
 				_dodgeInputTimer -= GetProcessDeltaTime();
 
-				// Sample input now so simultaneous presses are respected
-				Vector2 dodgeInput = ReadDirection();
-
-				if (dodgeInput != Vector2.Zero || _dodgeInputTimer <= 0)
+				// If player pressed any movement key *this frame*, accept the (combined) held input immediately
+				if (MovementJustPressed() != Vector2.Zero)
 				{
-					if (dodgeInput == Vector2.Zero)
-						dodgeInput = _facing; // fallback to last facing
+					_dodgeDirection = ReadDirection();
+					TransitionToState(PlayerState.Dodge);
+					break;
+				}
+
+				 // otherwise, wait for leniency timer to expire and then fall back to held direction or facing
+				if (_dodgeInputTimer <= 0)
+				{
+					// Sample input now so simultaneous presses are respected
+					Vector2 dodgeInput = ReadDirection();
 
 					if (dodgeInput == Vector2.Zero)
-						dodgeInput = Vector2.Right;
+					{
+						TransitionToState(PlayerState.Idle);
+						break;
+					}
 
-					_dodgeDirection = dodgeInput.Normalized();
-					_lastDodgeTime = Time.GetTicksMsec() / 1000.0; // update last dodge time
+					_dodgeDirection = dodgeInput;
 					TransitionToState(PlayerState.Dodge);
 				}
 				break;
@@ -148,8 +145,9 @@ public partial class Bean : CharacterBody2D
 	{
 		switch (s)
 		{
+			// play dodge animation; movement will be handled in ApplyMovementByState
 			case PlayerState.Dodge:
-				// play dodge animation; movement will be handled in ApplyMovementByState
+				// Set the sprite's flip based on direction
 				_sprite.FlipH = _dodgeDirection.X < 0 || _lastHorizontalFacing < 0;
 				_sprite.Play("dodge");
 				break;
@@ -174,6 +172,7 @@ public partial class Bean : CharacterBody2D
 				break;
 
 			case PlayerState.Walking:
+				// move using input vector, speed and modifier
 				Velocity = input * BaseSpeed * SpeedModifier;
 				MoveAndSlide();
 				break;
@@ -187,7 +186,6 @@ public partial class Bean : CharacterBody2D
 			case PlayerState.Idle:
 				// stop movement
 				Velocity = Vector2.Zero;
-				// You can still call MoveAndSlide if needed for other physics interactions:
 				MoveAndSlide();
 				break;
 		}
