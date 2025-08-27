@@ -1,0 +1,146 @@
+[gd_scene load_steps=19 format=3 uid="uid://bogxarpkd2mbd"]
+
+[ext_resource type="Script" uid="uid://cjemx5v6p4ud" path="res://scripts/MeleeWeapon.cs" id="1_n355p"]
+[ext_resource type="Texture2D" uid="uid://diffyoy8gok5y" path="res://art/animations/weapons/sword_sprite_sheet.png" id="1_ycbs3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xccsb"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p4x8v"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3oqan"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sjcpw"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(144, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mma44"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(192, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mqgyi"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(240, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ogkfw"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(288, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ejoqe"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(336, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n355p"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s4ec8"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5whp"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1yp6w"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fnw8x"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cp3m4"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ml5hy"]
+atlas = ExtResource("1_ycbs3")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvvga"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xccsb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p4x8v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3oqan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sjcpw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mma44")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mqgyi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ogkfw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ejoqe")
+}],
+"loop": false,
+"name": &"heavy_attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n355p")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s4ec8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5whp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1yp6w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fnw8x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cp3m4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ml5hy")
+}],
+"loop": false,
+"name": &"light_attack",
+"speed": 15.0
+}]
+
+[node name="Sword" type="Node2D"]
+scale = Vector2(7, 7)
+script = ExtResource("1_n355p")
+HeavyActive = 0.5
+LightOuterRadius = 33.0
+HeavySweepFromStartEdge = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jvvga")
+animation = &"heavy_attack"
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="Camera2D" type="Camera2D" parent="."]

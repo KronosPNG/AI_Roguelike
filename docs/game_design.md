@@ -132,8 +132,8 @@ F
 * **Weapons:**
 
   * Longsword:
-    * Primary attack: cut, medium damage, medium speed.
-    * Secondary attack: thrust, high damage, slow speed.
+    * Primary attack: snap cut, medium damage, medium speed.
+    * Secondary attack: pulling cut, high damage, slow speed.
   * Dagger:
     * Primary attack: cut, low damage, high speed.
     * Secondary attack: stab, high damage, medium speed.

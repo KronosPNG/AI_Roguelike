@@ -5,8 +5,12 @@ public partial class Bean : CharacterBody2D
 {
 	private AnimatedSprite2D _sprite;
 
-	//---- Movement Data ----
+	//---- Character Data ----
+	public byte Health { get; set; } = 100;
+	private const byte MaxHealth = 100;
+	public float DamageReduction { get; set; } = 0f;
 
+	//---- Movement Data ----
 	public float BaseSpeed { get; set; } = 500f; // normal speed
 	public float SpeedModifier { get; set; } = 1f; // speed modifier
 	public float DodgeSpeed { get; set; } = 1500f; // speed during dodge
@@ -27,7 +31,13 @@ public partial class Bean : CharacterBody2D
 
 	public override void _Ready()
 	{
-		_sprite = GetNode<AnimatedSprite2D>("PlayerSprite");
+		_sprite = GetNodeOrNull<AnimatedSprite2D>("PlayerSprite");
+		if (_sprite == null)
+		{
+			GD.PrintErr("Bean: could not find AnimatedSprite2D node 'PlayerSprite'");
+			return;
+		}
+		
 		_sprite.AnimationFinished += OnAnimationFinished; // Connect animation finished signal
 	}
 
