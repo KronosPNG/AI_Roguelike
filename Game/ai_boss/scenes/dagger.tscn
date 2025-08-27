@@ -1,0 +1,132 @@
+[gd_scene load_steps=17 format=3 uid="uid://35mgf5q5a7tl"]
+
+[ext_resource type="Script" uid="uid://cjemx5v6p4ud" path="res://scripts/MeleeWeapon.cs" id="1_5mald"]
+[ext_resource type="Texture2D" uid="uid://b3tua3qouv2v" path="res://art/animations/weapons/dagger_sprite_sheet.png" id="2_un7sy"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5mald"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phngh"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_un7sy"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkphk"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1scc2"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhf5r"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(160, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_siec8"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rohr5"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nip8w"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06afe"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6f1l"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xowah"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbqb4"]
+atlas = ExtResource("2_un7sy")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvvga"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5mald")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phngh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_un7sy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkphk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1scc2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mhf5r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_siec8")
+}],
+"loop": false,
+"name": &"heavy_attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rohr5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nip8w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06afe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6f1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xowah")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbqb4")
+}],
+"loop": false,
+"name": &"light_attack",
+"speed": 25.0
+}]
+
+[node name="Dagger" type="Node2D"]
+scale = Vector2(7, 7)
+script = ExtResource("1_5mald")
+LightActive = 0.2
+HeavyActive = 0.5
+LightOuterRadius = 30.0
+LightAngleDeg = 20.0
+HeavyInnerRadius = 15.0
+HeavyOuterRadius = 30.0
+HeavyAngleDeg = 70.0
+LightSweepEnabled = false
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jvvga")
+animation = &"light_attack"
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="Camera2D" type="Camera2D" parent="."]

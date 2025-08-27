@@ -226,6 +226,8 @@ metadata/_aseprite_wizard_source_file_hash_ = "e8f29a3492ff11e531f9e5072f607a06"
 position = Vector2(36, 32)
 shape = SubResource("RectangleShape2D_sgp6g")
 
+[node name="Hand" type="Node2D" parent="Bean"]
+
 [node name="Camera2D" type="Camera2D" parent="."]
 scale = Vector2(-287.196, -336.102)
 zoom = Vector2(0.4, 0.4)
