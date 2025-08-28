@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://35mgf5q5a7tl"]
+[gd_scene load_steps=17 format=3 uid="uid://cugyiq1gej4hh"]
 
 [ext_resource type="Script" uid="uid://cjemx5v6p4ud" path="res://scripts/MeleeWeapon.cs" id="1_5mald"]
 [ext_resource type="Texture2D" uid="uid://b3tua3qouv2v" path="res://art/animations/weapons/dagger_sprite_sheet.png" id="2_un7sy"]

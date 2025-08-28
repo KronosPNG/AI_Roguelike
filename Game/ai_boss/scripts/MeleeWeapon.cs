@@ -74,6 +74,9 @@ public partial class MeleeWeapon : Node2D
     // Track already hit bodies during the current Active window
     protected HashSet<Node> _alreadyHit = new HashSet<Node>();
 
+    // facing direction of the mouse relative to the player
+    protected bool _facingLeft = false;
+
     public override void _Ready()
     {
         _anim = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
@@ -118,24 +121,33 @@ public partial class MeleeWeapon : Node2D
             _heavyCooldownTimer = Math.Min(0, _heavyCooldownTimer - (float)delta);
 
         // read mouse clicks (for testing - replace with Bean input handler calls)
-		if (Input.IsActionJustPressed("light_attack"))
-		{
-			AttackLight(GetGlobalMousePosition());
-		}
-		else if (Input.IsActionJustPressed("heavy_attack"))
-		{
-			AttackHeavy(GetGlobalMousePosition());
-		}
+        if (Input.IsActionJustPressed("light_attack"))
+        {
+            AttackLight(GetGlobalMousePosition());
+        }
+        else if (Input.IsActionJustPressed("heavy_attack"))
+        {
+            AttackHeavy(GetGlobalMousePosition());
+        }
 
         // also for testing
-		// Get mouse position in global coordinates
+        // Get mouse position in global coordinates
         Vector2 mousePos = GetGlobalMousePosition();
-		
-		// Calculate direction from sprite center to mouse
-		Vector2 direction = mousePos - GlobalPosition;
-		
-		// Set rotation to face the mouse
-		_anim.Rotation = direction.Angle();
+
+        // Calculate direction from sprite center to mouse
+        Vector2 direction = mousePos - GlobalPosition;
+        if (direction.LengthSquared() <= 0.000001f) direction = Vector2.Right;
+
+        _facingLeft = direction.X < 0;
+
+        _anim.FlipH = _facingLeft;
+        
+        if (_facingLeft)
+            // Adjust rotation to face left
+            _anim.Rotation = direction.Angle() + Mathf.Pi;
+        else
+            // Set rotation to face the mouse
+            _anim.Rotation = direction.Angle();
     }
 
     // -------------------------
@@ -219,8 +231,10 @@ public partial class MeleeWeapon : Node2D
         _isCurrentAttackHeavy = isHeavy;
         _alreadyHit.Clear(); // Clear the list of already hit targets if it wasn't already cleared
 
+        bool facingAtStart = _facingLeft;
+
         // Build the crescent collision polygon local to HitArea
-        BuildAndApplyCrescent(isHeavy);
+        BuildAndApplyCrescent(isHeavy, facingAtStart);
 
         // enable monitoring so physics bodies entering will raise BodyEntered
         if (_hitArea != null) _hitArea.Monitoring = true;
@@ -273,7 +287,7 @@ public partial class MeleeWeapon : Node2D
     // -------------------------
     // Crescent polygon builder for CollisionPolygon2D
     // -------------------------
-    private void BuildAndApplyCrescent(bool isHeavy)
+    private void BuildAndApplyCrescent(bool isHeavy, bool facingLeftAtStart)
     {
         if (_hitArea == null || _hitAreaShape == null) return;
 
@@ -320,8 +334,10 @@ public partial class MeleeWeapon : Node2D
             sweepStepDelay = HeavySweepStepDelay;
         }
 
+        float effectiveArcCenterOffsetDeg = facingLeftAtStart ? -arcCenterOffsetDeg : arcCenterOffsetDeg;
+
         float angleRad = Mathf.DegToRad(angleDeg);
-        float centerAngle = dirAngle + Mathf.DegToRad(arcCenterOffsetDeg);
+        float centerAngle = dirAngle + Mathf.DegToRad(effectiveArcCenterOffsetDeg);
 
         // sector range
         float half = angleRad * 0.5f;
@@ -336,8 +352,10 @@ public partial class MeleeWeapon : Node2D
             return;
         }
 
+        bool effectiveSweepFromStart = sweepFromStart ^ facingLeftAtStart;
+
         // If sweep enabled, start asynchronous sweep task (cancellable)
-        _ = SweepCrescent(originLocal, innerR, outerR, startAngle, endAngle, angleDeg, sweepFromStart, sweepStepDeg, sweepStepDelay);
+        _ = SweepCrescent(originLocal, innerR, outerR, startAngle, endAngle, angleDeg, effectiveSweepFromStart, sweepStepDeg, sweepStepDelay);
     }
 
     // Normalize end angle to be greater than start angle

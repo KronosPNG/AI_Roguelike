@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Bean : CharacterBody2D
+public partial class PlayerController : CharacterBody2D
 {
 	private AnimatedSprite2D _sprite;
 
