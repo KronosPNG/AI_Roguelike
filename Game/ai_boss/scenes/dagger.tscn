@@ -110,6 +110,7 @@ animations = [{
 [node name="Dagger" type="Node2D"]
 scale = Vector2(7, 7)
 script = ExtResource("1_5mald")
+LightSweepEnabled = false
 LightActive = 0.2
 HeavyActive = 0.5
 LightOuterRadius = 30.0
@@ -117,7 +118,6 @@ LightAngleDeg = 20.0
 HeavyInnerRadius = 15.0
 HeavyOuterRadius = 30.0
 HeavyAngleDeg = 70.0
-LightSweepEnabled = false
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")

@@ -3,7 +3,10 @@ using System;
 
 public partial class PlayerController : CharacterBody2D
 {
+	//---- Node References ----
 	private AnimatedSprite2D _sprite;
+	private WeaponBase _equippedWeapon;
+	private Node2D _handNode;
 
 	//---- Character Data ----
 	public byte Health { get; set; } = 100;
@@ -25,9 +28,10 @@ public partial class PlayerController : CharacterBody2D
 	private sbyte _lastHorizontalFacing = 1; // 1 = right, -1 = left
 
 	//---- Player State ----
-	private enum PlayerState { Idle, Walking, DodgePrep, Dodge }
+	private enum PlayerState { Idle, Walking, DodgePrep, Dodge, Attacking }
 	private PlayerState _state = PlayerState.Idle;
 	private PlayerState _prevState = PlayerState.Idle; // for detecting state changes
+
 
 	public override void _Ready()
 	{
@@ -37,7 +41,14 @@ public partial class PlayerController : CharacterBody2D
 			GD.PrintErr("Bean: could not find AnimatedSprite2D node 'PlayerSprite'");
 			return;
 		}
-		
+
+		_handNode = GetNodeOrNull<Node2D>("Hand");
+		if (_handNode == null)
+		{
+			GD.PrintErr("Bean: could not find Hand node");
+			return;
+		}
+
 		_sprite.AnimationFinished += OnAnimationFinished; // Connect animation finished signal
 	}
 
@@ -52,6 +63,9 @@ public partial class PlayerController : CharacterBody2D
 		// State transitions (input-driven)
 		HandleStateTransitions(inputDir);
 
+		// Handle combat input (only when not dodging)
+		HandleCombatInput();
+
 		// Apply physics based on state (movement independent of animation)
 		ApplyMovementByState(delta, inputDir);
 
@@ -65,9 +79,9 @@ public partial class PlayerController : CharacterBody2D
 	}
 
 	void UpdateFacing(Vector2 inputDir)
-	{	
+	{
 		_facing = inputDir;
-			
+
 		if (!Mathf.IsEqualApprox(_facing.X, 0))
 			_lastHorizontalFacing = (sbyte)Mathf.Sign(_facing.X);
 	}
@@ -119,7 +133,7 @@ public partial class PlayerController : CharacterBody2D
 					break;
 				}
 
-				 // otherwise, wait for leniency timer to expire and then fall back to held direction or facing
+				// otherwise, wait for leniency timer to expire and then fall back to held direction or facing
 				if (_dodgeInputTimer <= 0)
 				{
 					// Sample input now so simultaneous presses are respected
@@ -140,6 +154,47 @@ public partial class PlayerController : CharacterBody2D
 				// We leave dodge only when its animation finishes (handled in animation_finished)
 				// so no transitions here. AnimationFinished -> EndDodge => sets Idle/Walking next.
 				break;
+
+			case PlayerState.Attacking:
+				// We leave attacking only when the weapon signals attack ended
+				// This is handled by weapon signals connected in EquipWeapon
+				break;
+		}
+	}
+
+	// --- Combat Input Handling -----------------
+	private void HandleCombatInput()
+	{
+		// Don't allow attacks while dodging, in dodge preparation, or already attacking
+		if (_state == PlayerState.Dodge || _state == PlayerState.DodgePrep || _state == PlayerState.Attacking)
+		{
+			if (Input.IsActionJustPressed("light_attack") || Input.IsActionJustPressed("heavy_attack"))
+			{
+				GD.Print($"Attack input blocked - Player state: {_state}");
+			}
+
+			return;
+		}
+
+		// Handle light attack input
+		if (Input.IsActionJustPressed("light_attack"))
+		{
+        	GD.Print("Light attack input received");
+			if(!_equippedWeapon.CanStartAttack(false)) return;
+
+			GD.Print("- Transitioning to Attacking");
+			TransitionToState(PlayerState.Attacking);
+			OnLightAttack();
+		}
+		// Handle heavy attack input  
+		else if (Input.IsActionJustPressed("heavy_attack"))
+		{
+			GD.Print("Heavy attack input received");
+			if(!_equippedWeapon.CanStartAttack(true)) return;
+
+			GD.Print("- Transitioning to Attacking");
+			TransitionToState(PlayerState.Attacking);
+			OnHeavyAttack();
 		}
 	}
 
@@ -167,6 +222,9 @@ public partial class PlayerController : CharacterBody2D
 			case PlayerState.Idle:
 				// animation set later
 				break;
+			case PlayerState.Attacking:
+				// animation will be triggered by weapon	
+				break;
 		}
 	}
 
@@ -181,6 +239,8 @@ public partial class PlayerController : CharacterBody2D
 				MoveAndSlide();
 				break;
 
+			case PlayerState.Attacking:
+				// allow movement while attacking (at reduced speed or full speed)
 			case PlayerState.Walking:
 				// move using input vector, speed and modifier
 				Velocity = input * BaseSpeed * SpeedModifier;
@@ -200,15 +260,15 @@ public partial class PlayerController : CharacterBody2D
 				break;
 		}
 	}
-	
+
 	// --- Animation ------------------------------
 	private void UpdateAnimationIfNeeded()
 	{
 		// Only update visuals when state changed OR we need to update facing while walking/idle
 		bool stateChanged = _state != _prevState;
 
-		// If we are in dodge, don't let other animations override; dodge animation will call OnAnimationFinished.
-		if (_state == PlayerState.Dodge)
+		// If we are in dodge or attacking, don't let other animations override
+		if (_state == PlayerState.Dodge || _state == PlayerState.Attacking)
 		{
 			_prevState = _state;
 			return;
@@ -247,4 +307,90 @@ public partial class PlayerController : CharacterBody2D
 				TransitionToState(PlayerState.Idle);
 		}
 	}
+
+	public void EquipWeapon(PackedScene weaponScene)
+	{
+		if (weaponScene == null) return;
+
+		if (_equippedWeapon != null)
+		{
+			// Disconnect signals
+			_equippedWeapon.AttackStarted -= OnWeaponAttackStarted;
+			_equippedWeapon.AttackEnded -= OnWeaponAttackEnded;
+			
+			_equippedWeapon.Unequip();
+			_equippedWeapon.QueueFree();
+			_equippedWeapon = null;
+		}
+
+
+		var weaponInstance = weaponScene.Instantiate() as WeaponBase;
+		if (weaponInstance == null) return;
+
+		_handNode.AddChild(weaponInstance);
+
+		CallDeferred(nameof(CallEquipDeferred), weaponInstance);
+		
+	}
+
+	private void CallEquipDeferred(WeaponBase weapon)
+	{
+		weapon.Equip(this);
+		_equippedWeapon = weapon;
+
+		// Connect to weapon signals
+		weapon.AttackStarted += OnWeaponAttackStarted;
+		weapon.AttackEnded += OnWeaponAttackEnded;
+	}
+
+	private void OnLightAttack()
+	{
+		_equippedWeapon.AttackLight(GetGlobalMousePosition());
+	}
+
+	private void OnHeavyAttack()
+	{
+		_equippedWeapon.AttackHeavy(GetGlobalMousePosition());
+	}
+
+	// --- Weapon Signal Handlers ---------------
+	private void OnWeaponAttackStarted(string attackName)
+	{
+		GD.Print($"Weapon attack started: {attackName}");
+		// Weapon attack has started, ensure we're in attacking state
+		if (_state != PlayerState.Attacking)
+		{
+			GD.Print($"Player not in attacking state ({_state}), transitioning now");
+			TransitionToState(PlayerState.Attacking);
+		}
+	}
+
+	private void OnWeaponAttackEnded(string attackName)
+	{
+		GD.Print($"Weapon attack ended: {attackName}, current player state: {_state}");
+
+		// Weapon attack has ended, return to appropriate state
+		if (_state == PlayerState.Attacking)
+		{
+			Vector2 currentInput = ReadDirection();
+			if (currentInput.Length() > 0)
+			{
+				GD.Print("Transitioning from Attacking to Walking");
+				TransitionToState(PlayerState.Walking);
+			}
+
+			else
+			{
+				GD.Print("Transitioning from Attacking to Idle");
+				TransitionToState(PlayerState.Idle);
+			}
+
+		}
+
+		else
+		{
+		    GD.Print($"Player was not in Attacking state when weapon ended attack (state: {_state})");
+		}
+	}
+
 }

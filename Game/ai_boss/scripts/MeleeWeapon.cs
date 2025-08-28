@@ -1,43 +1,8 @@
 using Godot;
 using System;
-using System.Collections.Generic;
 
-public partial class MeleeWeapon : Node2D
+public partial class MeleeWeapon : WeaponBase
 {
-    //---- Signals ----
-    [Signal] public delegate void AttackStartedEventHandler(string attackName); // Emitted when an attack starts
-    [Signal] public delegate void EntityHitEventHandler(Node2D entity, int damage); // Emitted when an entity is hit
-    [Signal] public delegate void AttackEndedEventHandler(string attackName); // Emitted when an attack ends
-
-    //---- Non-Mechanical Properties ----
-    [Export] protected string WeaponName = "Weapon";
-    [Export] protected string Description = "A basic melee weapon.";
-
-    //---- Mechanical Properties ----
-    [Export] public float LightCooldown = 0f; // Cooldown time for light attacks
-    [Export] public float HeavyCooldown = 0f; // Cooldown time for heavy attacks
-
-    [Export] public float LightWindup = 0f; // Delay before active frames
-    [Export] public float LightActive = 0.25f; // How long the hitbox is active
-
-    [Export] public float HeavyWindup = .1f;
-    [Export] public float HeavyActive = .75f;
-
-    [Export] public float LightDamage = 0f; // Damage dealt by light attacks
-    [Export] public float HeavyDamage = 0f;
-
-    // Hitbox properties
-    // Light attack hitbox
-    [Export] public float LightInnerRadius = 18f;
-	[Export] public float LightOuterRadius = 28f; 
-	[Export] public float LightAngleDeg = 70f; // Angle of the light attack arc
-	[Export] public float LightArcCenterOffsetDeg = 0; // Center offset for light attack arc
-
-    // Heavy attack hitbox
-	[Export] public float HeavyInnerRadius = 24f;
-	[Export] public float HeavyOuterRadius = 44f;
-	[Export] public float HeavyAngleDeg = 120f;
-	[Export] public float HeavyArcCenterOffsetDeg = 0; 
 
     // Sweep control (make the crescent appear incrementally)
     [Export] public bool LightSweepEnabled = true;
@@ -50,44 +15,17 @@ public partial class MeleeWeapon : Node2D
     [Export] public float HeavySweepStepDeg = 6f;
     [Export] public float HeavySweepStepDelay = 0.016f;
     protected bool _isSweeping = false;
-
-    // If false, only the signal will be emitted and other systems should subscribe.
-    [Export] public bool AutoApplyDamage = false;
-    [Export] public string EnemyDamageMethodName = "ApplyDamage"; // name of method to call on enemies (if AutoApplyDamage)
-
-    // ----- States -----
-    protected enum WeaponState { Ready, Windup, Active }
-    protected WeaponState _state = WeaponState.Ready;
-    // Track which attack is currently in progress (used by OpenHitWindow and CloseHitWindow)
-    protected bool _isCurrentAttackHeavy;
-
-    protected float _lightCooldownTimer = 0f; // Cooldown timer for light attacks
-    protected float _heavyCooldownTimer = 0f; // Cooldown timer for heavy attacks
-
-    protected AnimatedSprite2D _anim; 
+    
+    //---- Node References ----
     protected Area2D _hitArea; // Hit area for the weapon
     protected CollisionPolygon2D _hitAreaShape; // Hit area shape for the weapon
 
-    // Stores aim when the attack button was pressed (keeps damage decoupled from mouse movement during animation)
-    protected Vector2 _pendingHitTarget = Vector2.Zero;
-
-    // Track already hit bodies during the current Active window
-    protected HashSet<Node> _alreadyHit = new HashSet<Node>();
-
-    // facing direction of the mouse relative to the player
-    protected bool _facingLeft = false;
-
     public override void _Ready()
-    {
-        _anim = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
+    {   
+        base._Ready();
+
         _hitArea = GetNodeOrNull<Area2D>("HitArea");
         _hitAreaShape = GetNodeOrNull<CollisionPolygon2D>("HitArea/CollisionPolygon2D");
-
-        if (_anim == null)
-        {
-            GD.PrintErr("Sword: could not find AnimatedSprite2D node 'AnimatedSprite2D'");
-            return;
-        }
 
         if (_hitArea == null)
         {
@@ -112,55 +50,17 @@ public partial class MeleeWeapon : Node2D
         GetTree().SetDebugCollisionsHint(true);
     }
 
-    public override void _PhysicsProcess(double delta)
-    {
-        if (_lightCooldownTimer > 0)
-            _lightCooldownTimer = Math.Min(0, _lightCooldownTimer - (float)delta);
-
-        if (_heavyCooldownTimer > 0)
-            _heavyCooldownTimer = Math.Min(0, _heavyCooldownTimer - (float)delta);
-
-        // read mouse clicks (for testing - replace with Bean input handler calls)
-        if (Input.IsActionJustPressed("light_attack"))
-        {
-            AttackLight(GetGlobalMousePosition());
-        }
-        else if (Input.IsActionJustPressed("heavy_attack"))
-        {
-            AttackHeavy(GetGlobalMousePosition());
-        }
-
-        // also for testing
-        // Get mouse position in global coordinates
-        Vector2 mousePos = GetGlobalMousePosition();
-
-        // Calculate direction from sprite center to mouse
-        Vector2 direction = mousePos - GlobalPosition;
-        if (direction.LengthSquared() <= 0.000001f) direction = Vector2.Right;
-
-        _facingLeft = direction.X < 0;
-
-        _anim.FlipH = _facingLeft;
-        
-        if (_facingLeft)
-            // Adjust rotation to face left
-            _anim.Rotation = direction.Angle() + Mathf.Pi;
-        else
-            // Set rotation to face the mouse
-            _anim.Rotation = direction.Angle();
-    }
-
     // -------------------------
     // Public attack API 
     // They set up aim, play animation and set state to windup.
     // -------------------------
 
-    public void AttackLight(Vector2 mouseGlobalPos)
+    public override void AttackLight(Vector2 mouseGlobalPos)
     {
         Attack(mouseGlobalPos, false);
     }
 
-    public void AttackHeavy(Vector2 mouseGlobalPos)
+    public override void AttackHeavy(Vector2 mouseGlobalPos)
     {
         Attack(mouseGlobalPos, true);
     }
@@ -168,52 +68,17 @@ public partial class MeleeWeapon : Node2D
     // Internal attack method
     private void Attack(Vector2 mouseGlobalPos, bool isHeavy)
     {
-        if (!CanStartAttack(isHeavy)) return;
+        GD.Print($"Attack called: isHeavy={isHeavy}, weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
+        
+        if (!CanStartAttack(isHeavy)) 
+        {
+            GD.Print($"Attack blocked by CanStartAttack: weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
+            return;
+        }
+        
         _pendingHitTarget = mouseGlobalPos; // Store the target position for the attack
         _isCurrentAttackHeavy = isHeavy; 
         _ = StartAttackSequence(isHeavy);
-
-    }
-
-    // Check if the attack can be started
-    // By checking the current state and cooldown timers
-    private bool CanStartAttack(bool isHeavy)
-    {
-        if (_state != WeaponState.Ready) return false;
-        if (!isHeavy && _lightCooldownTimer > 0f) return false;
-        if (isHeavy && _heavyCooldownTimer > 0f) return false;
-        return true;
-    }
-
-    // Master sequence control (windup -> rely on animation call -> idle)
-    private async System.Threading.Tasks.Task StartAttackSequence(bool isHeavyAttack)
-    {
-        // set cooldown immediately so player can't spam
-        if (!isHeavyAttack) _lightCooldownTimer = LightCooldown;
-        else _heavyCooldownTimer = HeavyCooldown;
-
-        _state = WeaponState.Windup;
-        EmitSignal(nameof(AttackStarted), isHeavyAttack ? "heavy" : "light");
-
-        // Play corresponding animation on the weapon's AnimationPlayer (animations must exist)
-        if (_anim != null)
-        {
-            if (isHeavyAttack)
-                _anim.Play("heavy_attack");
-            else if (!isHeavyAttack)
-                _anim.Play("light_attack");
-        }
-
-        // Fallback: if animation doesn't call OpenHitWindow, we open it after windup time.
-        float windup = isHeavyAttack ? HeavyWindup : LightWindup;
-        await ToSignal(GetTree().CreateTimer(windup), "timeout");
-
-        // If animation already opened the window and changed state, don't forcibly open again.
-        if (_state == WeaponState.Windup)
-        {
-            OpenHitWindow(isHeavyAttack); // string needed for AnimationPlayer compatibility (call from code too)
-        }
-
     }
 
     // -------------------------
@@ -224,9 +89,11 @@ public partial class MeleeWeapon : Node2D
     // -------------------------
 
     // Start the hit window
-    public void OpenHitWindow(bool isHeavy)
+    public override void OpenHitWindow(bool isHeavy)
     {
-        if (_state == WeaponState.Active) return; // already open
+        if (_state == WeaponState.Active)
+            return; // already open
+        
         _state = WeaponState.Active;
         _isCurrentAttackHeavy = isHeavy;
         _alreadyHit.Clear(); // Clear the list of already hit targets if it wasn't already cleared
@@ -244,18 +111,11 @@ public partial class MeleeWeapon : Node2D
         _ = AutoCloseHitWindowAfter(activeDuration, isHeavy);
     }
 
-    // Auto-close the hit window after a delay
-    private async System.Threading.Tasks.Task AutoCloseHitWindowAfter(float secs, bool isHeavy)
-    {
-        await ToSignal(GetTree().CreateTimer(secs), "timeout");
-        // Only close if still active for this attack kind
-        if (_state == WeaponState.Active && _isCurrentAttackHeavy == isHeavy)
-            CloseHitWindow(isHeavy);
-    }
-
     // Close the hit window
-    public void CloseHitWindow(bool isHeavy)
+    public override void CloseHitWindow(bool isHeavy)
     {
+        GD.Print($"CloseHitWindow called: isHeavy={isHeavy}, currentState={_state}");
+
         // disable area monitoring
         if (_hitArea != null)
         {
@@ -267,21 +127,10 @@ public partial class MeleeWeapon : Node2D
             // clear polygon so it won't collide afterwards
             _hitAreaShape.Polygon = new Vector2[0];
         }
+        GD.Print("MeleeWeapon cleanup done, calling base.CloseHitWindow");
 
-        ResetWeaponState(isHeavy);
-
-    }
-
-    // Reset the weapon state and hit detection
-    private void ResetWeaponState(bool isHeavy)
-    {
-        _state = WeaponState.Ready;
-        _pendingHitTarget = Vector2.Zero;
-
-        // Reset list of already hit targets 
-        _alreadyHit.Clear();
-        
-        EmitSignal(nameof(AttackEnded), isHeavy ? "heavy" : "light");
+        base.CloseHitWindow(isHeavy);
+        GD.Print("base.CloseHitWindow completed");
     }
 
     // -------------------------

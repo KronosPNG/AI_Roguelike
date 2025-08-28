@@ -23,20 +23,6 @@ public partial class Main : Node2D
 	
 	private void SpawnSwordInBeanHand(PlayerController bean)
 	{
-		// Get the Hand node from Bean
-		Node2D handNode = bean.GetNodeOrNull<Node2D>("Hand");
-		if (handNode == null)
-		{
-			GD.PrintErr("Main: Could not find Hand node in Bean");
-			return;
-		}
-		
-		// Instantiate the sword
-		Node swordInstance = swordScene.Instantiate();
-		
-		// Add sword to the Hand node
-		handNode.AddChild(swordInstance);
-		
-		GD.Print("Sword spawned in Bean's hand!");
+		bean.CallDeferred("EquipWeapon", swordScene);
 	}
 }
