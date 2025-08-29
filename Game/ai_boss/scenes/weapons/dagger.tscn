@@ -140,7 +140,7 @@ animations = [{
 scale = Vector2(7, 7)
 script = ExtResource("1_j34lm")
 WeaponName = "Dagger"
-Description = "A basic melee weapon."
+Description = "A short blade,  nimble and fast for quick attacks."
 LightAttackConfig = SubResource("Resource_mhf5r")
 HeavyAttackConfig = SubResource("Resource_siec8")
 

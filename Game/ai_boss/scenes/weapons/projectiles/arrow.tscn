@@ -1,3 +1,32 @@
-[gd_scene format=3 uid="uid://dufefxrpx60dr"]
+[gd_scene load_steps=4 format=3 uid="uid://dufefxrpx60dr"]
 
-[node name="Arrow" type="Node2D"]
+[ext_resource type="Script" uid="uid://bppn0nrxopvcr" path="res://scripts/attack_types/Projectile.cs" id="1_di1w4"]
+[ext_resource type="Texture2D" uid="uid://dbcydwltr3pmr" path="res://art/animations/weapons/arrow-Sheet.png" id="2_lwydh"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_di1w4"]
+size = Vector2(11, 3)
+
+[node name="Arrow" type="RigidBody2D"]
+collision_layer = 8
+script = ExtResource("1_di1w4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.499999, 0.5)
+scale = Vector2(7, 7)
+shape = SubResource("RectangleShape2D_di1w4")
+debug_color = Color(0.522613, 0.13251, 0.652217, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(7, 7)
+texture = ExtResource("2_lwydh")
+offset = Vector2(-0.58, 0.56)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.499999, 0.5)
+scale = Vector2(7, 7)
+shape = SubResource("RectangleShape2D_di1w4")
+debug_color = Color(0.682353, 0, 0.0745098, 0.419608)

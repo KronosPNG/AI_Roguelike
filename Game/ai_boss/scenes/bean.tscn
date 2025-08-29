@@ -147,6 +147,8 @@ animations = [{
 size = Vector2(42, 84)
 
 [node name="Bean" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
 script = ExtResource("1_vdqyq")
 
 [node name="PlayerSprite" type="AnimatedSprite2D" parent="."]

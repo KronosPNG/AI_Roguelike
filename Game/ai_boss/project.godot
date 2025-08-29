@@ -61,6 +61,14 @@ heavy_attack={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="walls"
+2d_physics/layer_2="enemies"
+2d_physics/layer_3="player"
+2d_physics/layer_4="projectiles"
+2d_physics/layer_5="projectile_hits"
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
