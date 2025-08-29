@@ -5,7 +5,7 @@ public partial class PlayerController : CharacterBody2D
 {
 	//---- Node References ----
 	private AnimatedSprite2D _sprite;
-	private WeaponBase _equippedWeapon;
+	private Weapon _equippedWeapon;
 	private Node2D _handNode;
 
 	//---- Character Data ----
@@ -324,7 +324,7 @@ public partial class PlayerController : CharacterBody2D
 		}
 
 
-		var weaponInstance = weaponScene.Instantiate() as WeaponBase;
+		var weaponInstance = weaponScene.Instantiate() as Weapon;
 		if (weaponInstance == null) return;
 
 		_handNode.AddChild(weaponInstance);
@@ -333,7 +333,7 @@ public partial class PlayerController : CharacterBody2D
 		
 	}
 
-	private void CallEquipDeferred(WeaponBase weapon)
+	private void CallEquipDeferred(Weapon weapon)
 	{
 		weapon.Equip(this);
 		_equippedWeapon = weapon;
