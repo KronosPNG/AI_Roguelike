@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 [GlobalClass]
-public partial class CrescentMeleeAttack : AttackBase
+public partial class CrescentMeleeAttack : AttackBase, IAttack
 {
     // Attack hitbox
     [ExportGroup("Crescent Properties")]

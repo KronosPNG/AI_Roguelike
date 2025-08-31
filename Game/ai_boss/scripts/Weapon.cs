@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public partial class Weapon : Node2D
 {
 	// ---- Node References ----
-	protected AnimatedSprite2D _anim;
+	public AnimatedSprite2D _anim;
 	public Node2D OwnerCharacter { get; private set; }
 	public Area2D _hitArea { get; set; } // Hit area for the weapon
 	public CollisionPolygon2D _hitAreaShape { get; set; } // Hit area shape for the weapon
@@ -14,8 +14,17 @@ public partial class Weapon : Node2D
 	[Signal] public delegate void AttackStartedEventHandler(string attackName); // Emitted when an attack starts
 	[Signal] public delegate void EntityHitEventHandler(Node2D entity, int damage); // Emitted when an entity is hit
 	[Signal] public delegate void AttackEndedEventHandler(string attackName); // Emitted when an attack ends
+
+	// Signals for equipping/unequipping
 	[Signal] public delegate void EquippedEventHandler();
 	[Signal] public delegate void UnequippedEventHandler();
+
+	// Signals for charging
+    [Signal] public delegate void ChargeStartedEventHandler(string attackName);
+    [Signal] public delegate void ChargeUpdatedEventHandler(float chargeLevel);
+    [Signal] public delegate void ChargeReleasedEventHandler(string attackName);
+    [Signal] public delegate void ChargeCancelledEventHandler(string attackName);
+
 
 	//---- Non-Mechanical Properties ----
 	[Export] public string WeaponName = "Weapon";
@@ -36,6 +45,8 @@ public partial class Weapon : Node2D
 	protected HashSet<Node> _alreadyHit = new HashSet<Node>();
 	// facing direction of the mouse relative to the player
 	protected bool _facingLeft = false;
+	private IChargeable _currentChargingAttack;
+    private bool _isCharging = false;
 
 	// ---- Timers ----
 	protected float _lightCooldownTimer = 0f; // Cooldown timer for light attacks
@@ -109,6 +120,12 @@ public partial class Weapon : Node2D
 		else
 			// Set rotation to face the mouse
 			_anim.Rotation = direction.Angle();
+
+		// Update charge state
+		if (_isCharging)
+		{
+			UpdateCharge((float)delta);
+		}
 	}
 
 	public virtual void Equip(Node2D owner)
@@ -212,6 +229,120 @@ public partial class Weapon : Node2D
 		}
 	}
 
+	// ---- Charging Logic ----
+	public bool HasChargeableAttack(bool isHeavy)
+	{
+		var attackType = isHeavy ? HeavyAttackConfig : LightAttackConfig;
+		return attackType is IChargeable;
+	}
+
+	// Start charging an attack
+    public void StartCharge(Vector2 mouseGlobalPos, bool isHeavy)
+    {
+        if (_state != WeaponState.Ready) return;
+        
+        var config = isHeavy ? HeavyAttackConfig : LightAttackConfig;
+        if (config is not ChargedAttack chargedAttack) return;
+
+        _pendingHitTarget = mouseGlobalPos;
+        _isCurrentAttackHeavy = isHeavy;
+        _currentChargingAttack = chargedAttack;
+        _isCharging = true;
+        _state = WeaponState.Windup; // Use Windup state for charging
+
+        // Start the charging process
+        chargedAttack.StartCharging(this);
+        EmitSignal(nameof(ChargeStarted), isHeavy ? "heavy" : "light");
+    }
+
+	// Update the charging process (called from player controller)
+    public void UpdateCharge(float delta)
+    {
+        if (!_isCharging || _currentChargingAttack == null) return;
+        
+        _currentChargingAttack.UpdateCharge(this, delta);
+        
+        // Emit charge level updates for UI/feedback
+        float chargeLevel = _currentChargingAttack.getCurrentChargeTime() / _currentChargingAttack.getMaxChargeTime();
+        EmitSignal(nameof(ChargeUpdated), chargeLevel);
+    }
+
+	// Check if the charge can be released
+    public bool CanReleaseCharge()
+    {
+        return _isCharging && _currentChargingAttack?.CanReleaseCharge() == true;
+    }
+
+	// Execute the charged attack
+    public void ExecuteChargedLight(Vector2 mouseGlobalPos)
+    {
+		if (!_isCharging || _isCurrentAttackHeavy)
+		{
+			GD.Print("Charge not released!");
+			return;
+		}
+		
+        ExecuteChargedAttack(mouseGlobalPos);
+    }
+
+    public void ExecuteChargedHeavy(Vector2 mouseGlobalPos)
+    {
+        if (!_isCharging || !_isCurrentAttackHeavy) return;
+        ExecuteChargedAttack(mouseGlobalPos);
+    }
+
+	private void ExecuteChargedAttack(Vector2 mouseGlobalPos)
+    {
+		if (_currentChargingAttack == null)
+		{
+			GD.PrintErr("No current charging attack to execute!");
+			return;
+		}
+
+        _pendingHitTarget = mouseGlobalPos; // Update target in case mouse moved
+        
+        // Set cooldown
+        if (_isCurrentAttackHeavy) 
+            _heavyCooldownTimer = HeavyAttackConfig.Cooldown;
+        else 
+            _lightCooldownTimer = LightAttackConfig.Cooldown;
+
+        // Emit signals
+        EmitSignal(nameof(AttackStarted), _isCurrentAttackHeavy ? "heavy" : "light");
+        EmitSignal(nameof(ChargeReleased), _isCurrentAttackHeavy ? "heavy" : "light");
+
+        // Execute the charged attack
+        bool facingAtStart = _facingLeft;
+
+        GD.Print($"[Weapon]Executing charged attack: isHeavy={_isCurrentAttackHeavy}, target={_pendingHitTarget}, facingLeft={facingAtStart}");
+        _currentChargingAttack.Execute(this, _pendingHitTarget, facingAtStart);
+        
+        // Clean up charging state
+        _isCharging = false;
+        _currentChargingAttack = null;
+        
+        // The attack execution will handle state transitions
+    }
+
+	// Cancel the current charge
+    public void CancelCharge()
+    {
+        if (!_isCharging) return;
+        
+        string attackName = _isCurrentAttackHeavy ? "heavy" : "light";
+        
+        if (_currentChargingAttack != null)
+        {
+            _currentChargingAttack.Interrupt(this);
+        }
+        
+        EmitSignal(nameof(ChargeCancelled), attackName);
+        
+        _isCharging = false;
+        _currentChargingAttack = null;
+        _state = WeaponState.Ready;
+    }
+
 	// -------------------------
 	// AnimationPlayer Call Method targets
 	// - OpenHitWindow(true/false)  // call on the exact frame the weapon visually hits
@@ -220,7 +351,7 @@ public partial class Weapon : Node2D
 	// -------------------------
 
 	// Start the hit window
-	public  void OpenHitWindow(bool isHeavy)
+	public void OpenHitWindow(bool isHeavy)
 	{
 		if (_state == WeaponState.Active)
 			return; // already open

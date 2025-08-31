@@ -3,7 +3,7 @@ using System;
 using static Weapon;
 
 [GlobalClass]
-public partial class SweepingCrescentMeleeAttack : CrescentMeleeAttack
+public partial class SweepingCrescentMeleeAttack : CrescentMeleeAttack, IAttack
 {
     // Sweep control (make the crescent appear incrementally)
     [ExportGroup("Sweep Properties")]

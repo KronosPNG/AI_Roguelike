@@ -1,7 +1,7 @@
 using Godot;
 
 [GlobalClass]
-public partial class ProjectileAttack : AttackBase
+public partial class ProjectileAttack : AttackBase, IAttack, IShootable
 {
     [ExportGroup("Projectile Properties")]
     [Export] public PackedScene ProjectileScene; // The projectile prefab/scene
@@ -42,7 +42,7 @@ public partial class ProjectileAttack : AttackBase
         weapon.CloseHitWindow(false);
     }
 
-    private void SpawnProjectile(Weapon weapon, Vector2 spawnPosition, Vector2 baseDirection, int projectileIndex)
+    public void SpawnProjectile(Weapon weapon, Vector2 spawnPosition, Vector2 baseDirection, int projectileIndex)
     {
         // Calculate spread angle for this projectile
         float spreadAngle = 0f;
