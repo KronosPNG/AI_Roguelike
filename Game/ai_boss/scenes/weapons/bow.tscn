@@ -1,35 +1,62 @@
-[gd_scene load_steps=31 format=3 uid="uid://3ck2mhc1l2m0"]
+[gd_scene load_steps=32 format=3 uid="uid://3ck2mhc1l2m0"]
 
 [ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/Weapon.cs" id="1_rs3f0"]
-[ext_resource type="Script" uid="uid://wk4qbt8unixw" path="res://scripts/attack_types/ChargedAttack.cs" id="2_cwr1y"]
 [ext_resource type="Texture2D" uid="uid://c6pcpe0mr10b6" path="res://art/animations/weapons/bow-Sheet.png" id="2_pevdf"]
 [ext_resource type="PackedScene" uid="uid://dufefxrpx60dr" path="res://scenes/weapons/projectiles/arrow.tscn" id="2_rs3f0"]
 [ext_resource type="Script" uid="uid://behghmgcgacq5" path="res://scripts/attack_types/ProjectileAttack.cs" id="2_wr7d4"]
+[ext_resource type="Script" uid="uid://yslsc0gfiae4" path="res://scripts/attack_types/ChargedProjectileAttack.cs" id="4_cwr1y"]
 
-[sub_resource type="Resource" id="Resource_0hpek"]
-script = ExtResource("2_cwr1y")
-MinChargeTime = 1.0
-MaxChargeTime = 3.0
-MinChargeDamagePercentage = 0.1
-MaxChargeDamagePercentage = 1.0
-RequiresMinCharge = false
-ChargeAnimation = "charge"
-IdleAnimation = "idle"
+[sub_resource type="Resource" id="Resource_cwr1y"]
+script = ExtResource("2_wr7d4")
+ProjectileScene = ExtResource("2_rs3f0")
+ProjectileSpeed = 1500.0
+ProjectileLifetime = 3.0
+ProjectileCount = 1
+SpreadAngleDeg = 0.0
+SpawnOffset = Vector2(0, 0)
 Damage = 5.0
 Cooldown = 0.0
 Windup = 0.0
 Active = 0.0
-metadata/_custom_type_script = "uid://wk4qbt8unixw"
+metadata/_custom_type_script = "uid://behghmgcgacq5"
+
+[sub_resource type="Resource" id="Resource_hl64m"]
+script = ExtResource("4_cwr1y")
+ProjectileAttack = SubResource("Resource_cwr1y")
+ScaleProjectileCountWithCharge = false
+MaxProjectileCount = 5
+ScaleSpeedWithCharge = true
+MinProjectileSpeedMultiplier = 0.75
+MaxProjectileSpeedMultiplier = 1.0
+ScaleProjectileLifeWithCharge = true
+MinProjectileLifeMultiplier = 0.05
+MaxProjectileLifeMultiplier = 1.0
+UseHybridLifeScaling = true
+LifeScalingBreakpoint = 0.3
+LifeScalingExponent = 0.8
+SlowGrowthMultiplier = 0.2
+MinChargeTime = 1.0
+MaxChargeTime = 3.5
+MinChargeDamagePercentage = 0.1
+MaxChargeDamagePercentage = 1.0
+RequiresMinCharge = true
+ChargeAnimation = "charge"
+IdleAnimation = "idle"
+Damage = 0.0
+Cooldown = 0.0
+Windup = 0.0
+Active = 0.0
+metadata/_custom_type_script = "uid://yslsc0gfiae4"
 
 [sub_resource type="Resource" id="Resource_rs3f0"]
 script = ExtResource("2_wr7d4")
 ProjectileScene = ExtResource("2_rs3f0")
-ProjectileSpeed = 900.0
+ProjectileSpeed = 1200.0
 ProjectileLifetime = 3.0
 ProjectileCount = 3
 SpreadAngleDeg = 20.0
 SpawnOffset = Vector2(0, 0)
-Damage = 0.0
+Damage = 5.0
 Cooldown = 0.0
 Windup = 0.25
 Active = 0.0
@@ -217,7 +244,7 @@ scale = Vector2(7, 7)
 script = ExtResource("1_rs3f0")
 WeaponName = "Bow"
 Description = ""
-LightAttackConfig = SubResource("Resource_0hpek")
+LightAttackConfig = SubResource("Resource_hl64m")
 HeavyAttackConfig = SubResource("Resource_rs3f0")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

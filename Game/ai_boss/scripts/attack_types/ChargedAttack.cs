@@ -19,6 +19,7 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
     private Node _chargeEffect;
     private bool _isCharging = false;
     private AnimatedSprite2D _anim;
+    protected float chargeRatio = 0f;
 
     // Calculate damage based on charge time
     public float GetChargedDamage(float chargeTime)
@@ -27,7 +28,7 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
             return 0f; // No damage if under minimum charge
         // Clamp charge time to valid range
         float clampedChargeTime = Mathf.Clamp(chargeTime, MinChargeTime, MaxChargeTime);
-        float chargeRatio = Mathf.Clamp(clampedChargeTime / MaxChargeTime, 0f, 1f);
+        chargeRatio = Mathf.Clamp(clampedChargeTime / MaxChargeTime, 0f, 1f);
 
         chargeRatio = Math.Clamp(chargeRatio, 0f, 1f);
 
@@ -125,12 +126,7 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
             weapon._anim.Play(animName);
         }
 
-        PerformChargedAttack(weapon, damage);
-    }
-
-    public virtual void PerformChargedAttack(Weapon weapon, float damage)
-    {
-        // Or alternatively, if you want immediate execution:
+         // Or alternatively, if you want immediate execution:
         weapon.OpenHitWindow(weapon._isCurrentAttackHeavy);
 
         GD.Print($"Charged attack executed with {damage} damage!");
