@@ -10,7 +10,7 @@
 script = ExtResource("2_wr7d4")
 ProjectileScene = ExtResource("2_rs3f0")
 ProjectileSpeed = 1500.0
-ProjectileLifetime = 3.0
+ProjectileLifetime = 1.0
 ProjectileCount = 1
 SpreadAngleDeg = 0.0
 SpawnOffset = Vector2(0, 0)
@@ -29,14 +29,12 @@ ScaleSpeedWithCharge = true
 MinProjectileSpeedMultiplier = 0.75
 MaxProjectileSpeedMultiplier = 1.0
 ScaleProjectileLifeWithCharge = true
-MinProjectileLifeMultiplier = 0.05
+MinProjectileLifeMultiplier = 0.1
 MaxProjectileLifeMultiplier = 1.0
-UseHybridLifeScaling = true
-LifeScalingBreakpoint = 0.3
-LifeScalingExponent = 0.8
-SlowGrowthMultiplier = 0.2
-MinChargeTime = 1.0
-MaxChargeTime = 3.5
+UseExponentialLifeScaling = true
+LifeScalingExponent = 0.25
+MinChargeTime = 1.5
+MaxChargeTime = 4.0
 MinChargeDamagePercentage = 0.1
 MaxChargeDamagePercentage = 1.0
 RequiresMinCharge = true
@@ -249,12 +247,10 @@ HeavyAttackConfig = SubResource("Resource_rs3f0")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
-animation = &"idle"
+animation = &"charge"
 
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
-
-[node name="Camera2D" type="Camera2D" parent="."]

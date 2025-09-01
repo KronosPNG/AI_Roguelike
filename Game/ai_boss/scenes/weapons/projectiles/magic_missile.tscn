@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=3 uid="uid://btlvl7kus6crp"]
+
+[ext_resource type="Script" uid="uid://bppn0nrxopvcr" path="res://scripts/attack_types/Projectile.cs" id="1_pqfyw"]
+[ext_resource type="Texture2D" uid="uid://b7f84cei5xux" path="res://art/animations/weapons/magic_missile-Sheet.png" id="2_pqfyw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_di1w4"]
+size = Vector2(11, 7)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o2qux"]
+atlas = ExtResource("2_pqfyw")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_belpv"]
+atlas = ExtResource("2_pqfyw")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fk3xx"]
+atlas = ExtResource("2_pqfyw")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_785om"]
+atlas = ExtResource("2_pqfyw")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7dxrr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o2qux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_belpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fk3xx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_785om")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
+
+[node name="MagicMissile" type="RigidBody2D"]
+collision_layer = 8
+script = ExtResource("1_pqfyw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.499999, 0.5)
+scale = Vector2(7, 7)
+shape = SubResource("RectangleShape2D_di1w4")
+debug_color = Color(0.522613, 0.13251, 0.652217, 0.42)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(7, 7)
+sprite_frames = SubResource("SpriteFrames_7dxrr")
+frame_progress = 0.557472
+offset = Vector2(-0.59, -0.4)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.499999, 0.499999)
+scale = Vector2(7, 7)
+shape = SubResource("RectangleShape2D_di1w4")
+debug_color = Color(0.682353, 0, 0.0745098, 0.419608)

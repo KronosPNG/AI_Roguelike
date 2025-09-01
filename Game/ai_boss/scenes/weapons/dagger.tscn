@@ -153,5 +153,3 @@ animation = &"light_attack"
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
-
-[node name="Camera2D" type="Camera2D" parent="."]

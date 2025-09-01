@@ -10,7 +10,7 @@ public partial class Main : Node2D
 	{
 		// Load scenes
 		beanScene = ResourceLoader.Load<PackedScene>("res://scenes/bean.tscn");
-		swordScene = ResourceLoader.Load<PackedScene>("res://scenes/weapons/bow.tscn");
+		swordScene = ResourceLoader.Load<PackedScene>("res://scenes/weapons/staff.tscn");
 		
 		// Instantiate Bean
 		PlayerController beanInstance = beanScene.Instantiate<PlayerController>();
