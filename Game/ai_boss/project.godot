@@ -23,6 +23,14 @@ project/assembly_name="AI_Boss"
 
 enabled=PackedStringArray("res://addons/AsepriteWizard/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://art/": "pink",
+"res://scenes/": "purple",
+"res://scripts/": "blue"
+}
+
 [input]
 
 move_left={

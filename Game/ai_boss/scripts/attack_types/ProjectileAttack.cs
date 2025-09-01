@@ -9,7 +9,7 @@ public partial class ProjectileAttack : AttackBase, IAttack, IShootable
     [Export] public float ProjectileLifetime = 5f; // How long the projectile lives
     [Export] public int ProjectileCount = 1; // Number of projectiles per attack
     [Export] public float SpreadAngleDeg = 0f; // Spread angle for multiple projectiles
-    [Export] public Vector2 SpawnOffset = Vector2.Zero; // Offset from weapon position
+    [Export] public float SpawnDistanceFromPlayer = 0f; // Distance from player in direction of target
 
     public override void Execute(Weapon weapon, Vector2 target, bool facingLeft)
     {
@@ -19,16 +19,16 @@ public partial class ProjectileAttack : AttackBase, IAttack, IShootable
             return;
         }
 
-        Vector2 originGlobal = weapon.GlobalPosition;
-        Vector2 direction = (target - originGlobal).Normalized();
+        // Get player position from weapon's owner
+        Vector2 playerPosition = weapon.OwnerCharacter?.GlobalPosition ?? weapon.GlobalPosition;
+        Vector2 direction = (target - playerPosition).Normalized();
 
         // If direction is too small, use default
         if (direction.LengthSquared() <= 0.000001f)
             direction = facingLeft ? Vector2.Left : Vector2.Right;
 
-        // Calculate spawn position with offset
-        Vector2 effectiveOffset = facingLeft ? new Vector2(-SpawnOffset.X, SpawnOffset.Y) : SpawnOffset;
-        Vector2 spawnPosition = originGlobal + effectiveOffset;
+        // Calculate spawn position: start from player, move distance towards target
+        Vector2 spawnPosition = playerPosition + (direction * SpawnDistanceFromPlayer);
 
         // Spawn projectiles
         for (int i = 0; i < ProjectileCount; i++)

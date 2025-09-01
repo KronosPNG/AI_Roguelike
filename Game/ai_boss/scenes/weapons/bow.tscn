@@ -1,6 +1,6 @@
-[gd_scene load_steps=32 format=3 uid="uid://3ck2mhc1l2m0"]
+[gd_scene load_steps=30 format=3 uid="uid://3ck2mhc1l2m0"]
 
-[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/Weapon.cs" id="1_rs3f0"]
+[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_rs3f0"]
 [ext_resource type="Texture2D" uid="uid://c6pcpe0mr10b6" path="res://art/animations/weapons/bow-Sheet.png" id="2_pevdf"]
 [ext_resource type="PackedScene" uid="uid://dufefxrpx60dr" path="res://scenes/weapons/projectiles/arrow.tscn" id="2_rs3f0"]
 [ext_resource type="Script" uid="uid://behghmgcgacq5" path="res://scripts/attack_types/ProjectileAttack.cs" id="2_wr7d4"]
@@ -13,7 +13,7 @@ ProjectileSpeed = 1500.0
 ProjectileLifetime = 1.0
 ProjectileCount = 1
 SpreadAngleDeg = 0.0
-SpawnOffset = Vector2(0, 0)
+SpawnDistanceFromPlayer = 0.0
 Damage = 5.0
 Cooldown = 0.0
 Windup = 0.0
@@ -53,7 +53,7 @@ ProjectileSpeed = 1200.0
 ProjectileLifetime = 3.0
 ProjectileCount = 3
 SpreadAngleDeg = 20.0
-SpawnOffset = Vector2(0, 0)
+SpawnDistanceFromPlayer = 0.0
 Damage = 5.0
 Cooldown = 0.0
 Windup = 0.25
@@ -124,27 +124,19 @@ region = Rect2(0, 0, 32, 32)
 atlas = ExtResource("2_pevdf")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_05m7k"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_d72fh"]
 atlas = ExtResource("2_pevdf")
 region = Rect2(160, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jrr4c"]
-atlas = ExtResource("2_pevdf")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_k06fv"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_05m7k"]
 atlas = ExtResource("2_pevdf")
 region = Rect2(96, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_t87uk"]
-atlas = ExtResource("2_pevdf")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jga22"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_jrr4c"]
 atlas = ExtResource("2_pevdf")
 region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_x7f65"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_k06fv"]
 atlas = ExtResource("2_pevdf")
 region = Rect2(0, 0, 32, 32)
 
@@ -215,6 +207,9 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_d72fh")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_05m7k")
 }, {
 "duration": 1.0,
@@ -222,15 +217,6 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_k06fv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_t87uk")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_jga22")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_x7f65")
 }],
 "loop": false,
 "name": &"light_attack",
@@ -247,7 +233,9 @@ HeavyAttackConfig = SubResource("Resource_rs3f0")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
-animation = &"charge"
+animation = &"light_attack"
+frame = 3
+frame_progress = 1.0
 
 [node name="Pivot" type="Node2D" parent="."]
 

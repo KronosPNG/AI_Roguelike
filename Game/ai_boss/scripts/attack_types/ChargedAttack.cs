@@ -114,9 +114,6 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
 
     protected virtual void ExecuteChargedAttack(Weapon weapon, Vector2 target, bool facingLeft, float damage)
     {
-        // Store the charged damage so the weapon can use it
-        // You might need to add a field to store this temporarily
-
         // Instead of immediately calling CloseHitWindow, trigger the normal attack sequence
         // Play the appropriate attack animation that will call OpenHitWindow
         if (weapon._anim != null)
@@ -126,8 +123,7 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
             weapon._anim.Play(animName);
         }
 
-         // Or alternatively, if you want immediate execution:
-        weapon.OpenHitWindow(weapon._isCurrentAttackHeavy);
+        weapon.CloseHitWindow(weapon._isCurrentAttackHeavy);
 
         GD.Print($"Charged attack executed with {damage} damage!");
     }

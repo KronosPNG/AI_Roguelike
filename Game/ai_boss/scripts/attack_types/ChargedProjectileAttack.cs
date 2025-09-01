@@ -24,7 +24,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
     private int _originalProjectileCount;
     private bool _originalValuesStored = false;
 
-    protected override void ExecuteChargedAttack(Weapon weapon, Vector2 target, bool facingLeft, float chargedDamage)
+    protected override async void ExecuteChargedAttack(Weapon weapon, Vector2 target, bool facingLeft, float chargedDamage)
     {
         if (ProjectileAttack == null)
         {
@@ -41,28 +41,33 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
             _originalValuesStored = true;
         }
 
-        if (weapon._anim != null)
-        {
-            // Play the attack animation - this should have animation calls to OpenHitWindow
-            string animName = weapon._isCurrentAttackHeavy ? "heavy_attack" : "light_attack";
-            weapon._anim.Play(animName);
-        }
-
         // Use the charge ratio calculated by the parent class
         GD.Print($"[ChargedProjectileAttack] Using charge ratio from parent: {chargeRatio}, charge time: {_currentChargeTime}");
 
         // Update projectile attack properties based on charge
         ConfigureProjectileAttackForCharge(chargedDamage, chargeRatio);
 
+        // Play attack animation first
+        if (weapon._anim != null)
+        {
+            GD.Print("[ChargedProjectileAttack] Playing attack animation");
+            string animName = weapon._isCurrentAttackHeavy ? "heavy_attack" : "light_attack";
+            weapon._anim.Play(animName);
+        }
+
+        // Wait for windup time like normal attacks do
+        float windup = weapon._isCurrentAttackHeavy ? weapon.HeavyAttackConfig.Windup : weapon.LightAttackConfig.Windup;
+        await weapon.ToSignal(weapon.GetTree().CreateTimer(windup), "timeout");
+
         // Execute the projectile attack using composition
         ProjectileAttack.Execute(weapon, target, facingLeft);
 
         GD.Print($"ChargedProjectileAttack executed with {ProjectileAttack.ProjectileCount} projectiles at {ProjectileAttack.ProjectileSpeed} speed, lifetime: {ProjectileAttack.ProjectileLifetime}");
 
-        // Restore original values immediately after execution
+        // Restore original values after execution
         RestoreOriginalValues();
 
-        weapon.OpenHitWindow(weapon._isCurrentAttackHeavy);
+        weapon.CloseHitWindow(weapon._isCurrentAttackHeavy);
     }
     
     private void RestoreOriginalValues()

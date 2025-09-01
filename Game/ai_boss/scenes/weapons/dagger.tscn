@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://djl2qfaytujjk"]
 
-[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/Weapon.cs" id="1_j34lm"]
+[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_j34lm"]
 [ext_resource type="Script" uid="uid://di2v6trtuujfe" path="res://scripts/attack_types/CrescentMeleeAttack.cs" id="2_1itfw"]
 [ext_resource type="Script" uid="uid://cpybuc7cg7rl5" path="res://scripts/attack_types/SweepingCrescentMeleeAttack.cs" id="3_2j8e1"]
 [ext_resource type="Texture2D" uid="uid://b3tua3qouv2v" path="res://art/animations/weapons/dagger_sprite_sheet.png" id="4_syark"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://btlvl7kus6crp"]
+[gd_scene load_steps=8 format=3 uid="uid://btlvl7kus6crp"]
 
 [ext_resource type="Script" uid="uid://bppn0nrxopvcr" path="res://scripts/attack_types/Projectile.cs" id="1_pqfyw"]
 [ext_resource type="Texture2D" uid="uid://b7f84cei5xux" path="res://art/animations/weapons/magic_missile-Sheet.png" id="2_pqfyw"]
@@ -18,10 +18,6 @@ region = Rect2(16, 0, 16, 16)
 atlas = ExtResource("2_pqfyw")
 region = Rect2(32, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_785om"]
-atlas = ExtResource("2_pqfyw")
-region = Rect2(48, 0, 16, 16)
-
 [sub_resource type="SpriteFrames" id="SpriteFrames_7dxrr"]
 animations = [{
 "frames": [{
@@ -33,13 +29,10 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fk3xx")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_785om")
 }],
 "loop": true,
 "name": &"default",
-"speed": 12.0
+"speed": 9.0
 }]
 
 [node name="MagicMissile" type="RigidBody2D"]
@@ -55,7 +48,7 @@ debug_color = Color(0.522613, 0.13251, 0.652217, 0.42)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_7dxrr")
-frame_progress = 0.557472
+frame_progress = 0.265821
 offset = Vector2(-0.59, -0.4)
 
 [node name="Area2D" type="Area2D" parent="."]
