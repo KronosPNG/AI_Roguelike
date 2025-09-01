@@ -1,0 +1,244 @@
+[gd_scene load_steps=30 format=3 uid="uid://3ck2mhc1l2m0"]
+
+[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_rs3f0"]
+[ext_resource type="Texture2D" uid="uid://c6pcpe0mr10b6" path="res://art/animations/weapons/bow-Sheet.png" id="2_pevdf"]
+[ext_resource type="PackedScene" uid="uid://dufefxrpx60dr" path="res://scenes/weapons/projectiles/arrow.tscn" id="2_rs3f0"]
+[ext_resource type="Script" uid="uid://behghmgcgacq5" path="res://scripts/attack_types/ProjectileAttack.cs" id="2_wr7d4"]
+[ext_resource type="Script" uid="uid://yslsc0gfiae4" path="res://scripts/attack_types/ChargedProjectileAttack.cs" id="4_cwr1y"]
+
+[sub_resource type="Resource" id="Resource_cwr1y"]
+script = ExtResource("2_wr7d4")
+ProjectileScene = ExtResource("2_rs3f0")
+ProjectileSpeed = 1500.0
+ProjectileLifetime = 1.0
+ProjectileCount = 1
+SpreadAngleDeg = 0.0
+SpawnDistanceFromPlayer = 0.0
+Damage = 5.0
+Cooldown = 0.0
+Windup = 0.0
+Active = 0.0
+metadata/_custom_type_script = "uid://behghmgcgacq5"
+
+[sub_resource type="Resource" id="Resource_hl64m"]
+script = ExtResource("4_cwr1y")
+ProjectileAttack = SubResource("Resource_cwr1y")
+ScaleProjectileCountWithCharge = false
+MaxProjectileCount = 5
+ScaleSpeedWithCharge = true
+MinProjectileSpeedMultiplier = 0.75
+MaxProjectileSpeedMultiplier = 1.0
+ScaleProjectileLifeWithCharge = true
+MinProjectileLifeMultiplier = 0.1
+MaxProjectileLifeMultiplier = 1.0
+UseExponentialLifeScaling = true
+LifeScalingExponent = 0.25
+MinChargeTime = 1.5
+MaxChargeTime = 4.0
+MinChargeDamagePercentage = 0.1
+MaxChargeDamagePercentage = 1.0
+RequiresMinCharge = true
+ChargeAnimation = "charge"
+IdleAnimation = "idle"
+Damage = 0.0
+Cooldown = 0.0
+Windup = 0.0
+Active = 0.0
+metadata/_custom_type_script = "uid://yslsc0gfiae4"
+
+[sub_resource type="Resource" id="Resource_rs3f0"]
+script = ExtResource("2_wr7d4")
+ProjectileScene = ExtResource("2_rs3f0")
+ProjectileSpeed = 1200.0
+ProjectileLifetime = 3.0
+ProjectileCount = 3
+SpreadAngleDeg = 20.0
+SpawnDistanceFromPlayer = 0.0
+Damage = 5.0
+Cooldown = 0.0
+Windup = 0.25
+Active = 0.0
+metadata/_custom_type_script = "uid://behghmgcgacq5"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jug75"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_amlmr"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5wrx7"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjrp3"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_37nht"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qsm82"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wr7d4"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rs3f0"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cwr1y"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0hpek"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hl64m"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6feux"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ldsnh"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uyybr"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vsqa"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4s3cm"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d72fh"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_05m7k"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jrr4c"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k06fv"]
+atlas = ExtResource("2_pevdf")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvvga"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jug75")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_amlmr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5wrx7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjrp3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_37nht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qsm82")
+}],
+"loop": false,
+"name": &"charge",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wr7d4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rs3f0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cwr1y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0hpek")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hl64m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6feux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ldsnh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uyybr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vsqa")
+}],
+"loop": false,
+"name": &"heavy_attack",
+"speed": 54.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4s3cm")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d72fh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_05m7k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jrr4c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k06fv")
+}],
+"loop": false,
+"name": &"light_attack",
+"speed": 36.0
+}]
+
+[node name="Bow" type="Node2D"]
+scale = Vector2(7, 7)
+script = ExtResource("1_rs3f0")
+WeaponName = "Bow"
+Description = ""
+LightAttackConfig = SubResource("Resource_hl64m")
+HeavyAttackConfig = SubResource("Resource_rs3f0")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jvvga")
+animation = &"light_attack"
+frame = 3
+frame_progress = 1.0
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]

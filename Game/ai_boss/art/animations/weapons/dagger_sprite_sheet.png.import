@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3a4xt78ppwt2"
-path="res://.godot/imported/bean_sprite_sheet.png-d066ea317fa7544cf3584c4460635f3b.ctex"
+uid="uid://b3tua3qouv2v"
+path="res://.godot/imported/dagger_sprite_sheet.png-1a2e4fa9904bcc423760469eb04bb62b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/animations/bean_sprite_sheet.png"
-dest_files=["res://.godot/imported/bean_sprite_sheet.png-d066ea317fa7544cf3584c4460635f3b.ctex"]
+source_file="res://art/animations/weapons/dagger_sprite_sheet.png"
+dest_files=["res://.godot/imported/dagger_sprite_sheet.png-1a2e4fa9904bcc423760469eb04bb62b.ctex"]
 
 [params]
 

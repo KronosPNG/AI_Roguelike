@@ -1,0 +1,155 @@
+[gd_scene load_steps=21 format=3 uid="uid://djl2qfaytujjk"]
+
+[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_j34lm"]
+[ext_resource type="Script" uid="uid://di2v6trtuujfe" path="res://scripts/attack_types/CrescentMeleeAttack.cs" id="2_1itfw"]
+[ext_resource type="Script" uid="uid://cpybuc7cg7rl5" path="res://scripts/attack_types/SweepingCrescentMeleeAttack.cs" id="3_2j8e1"]
+[ext_resource type="Texture2D" uid="uid://b3tua3qouv2v" path="res://art/animations/weapons/dagger_sprite_sheet.png" id="4_syark"]
+
+[sub_resource type="Resource" id="Resource_mhf5r"]
+script = ExtResource("2_1itfw")
+InnerRadius = 5.0
+OuterRadius = 20.0
+AngleDeg = 30.0
+ArcCenterOffsetDeg = 0.0
+Damage = 0.0
+Cooldown = 0.05
+Windup = 0.0
+Active = 0.25
+metadata/_custom_type_script = "uid://di2v6trtuujfe"
+
+[sub_resource type="Resource" id="Resource_siec8"]
+script = ExtResource("3_2j8e1")
+SweepFromStartEdge = true
+SweepStepDeg = 6.0
+SweepStepDelay = 0.016
+InnerRadius = 13.0
+OuterRadius = 30.0
+AngleDeg = 90.0
+ArcCenterOffsetDeg = 0.0
+Damage = 0.0
+Cooldown = 1.0
+Windup = 0.0
+Active = 0.5
+metadata/_custom_type_script = "uid://cpybuc7cg7rl5"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5mald"]
+atlas = ExtResource("4_syark")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phngh"]
+atlas = ExtResource("4_syark")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_un7sy"]
+atlas = ExtResource("4_syark")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkphk"]
+atlas = ExtResource("4_syark")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1scc2"]
+atlas = ExtResource("4_syark")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhf5r"]
+atlas = ExtResource("4_syark")
+region = Rect2(160, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_siec8"]
+atlas = ExtResource("4_syark")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rohr5"]
+atlas = ExtResource("4_syark")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nip8w"]
+atlas = ExtResource("4_syark")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06afe"]
+atlas = ExtResource("4_syark")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6f1l"]
+atlas = ExtResource("4_syark")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xowah"]
+atlas = ExtResource("4_syark")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbqb4"]
+atlas = ExtResource("4_syark")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvvga"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5mald")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phngh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_un7sy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkphk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1scc2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mhf5r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_siec8")
+}],
+"loop": false,
+"name": &"heavy_attack",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rohr5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nip8w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06afe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6f1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xowah")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbqb4")
+}],
+"loop": false,
+"name": &"light_attack",
+"speed": 25.0
+}]
+
+[node name="Dagger" type="Node2D"]
+scale = Vector2(7, 7)
+script = ExtResource("1_j34lm")
+WeaponName = "Dagger"
+Description = "A short blade,  nimble and fast for quick attacks."
+LightAttackConfig = SubResource("Resource_mhf5r")
+HeavyAttackConfig = SubResource("Resource_siec8")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jvvga")
+animation = &"light_attack"
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]

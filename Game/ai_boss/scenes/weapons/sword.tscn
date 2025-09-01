@@ -1,0 +1,164 @@
+[gd_scene load_steps=21 format=3 uid="uid://cqiyycxt5b10s"]
+
+[ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_58ehi"]
+[ext_resource type="Script" uid="uid://cpybuc7cg7rl5" path="res://scripts/attack_types/SweepingCrescentMeleeAttack.cs" id="2_gwb47"]
+[ext_resource type="Texture2D" uid="uid://diffyoy8gok5y" path="res://art/animations/weapons/sword_sprite_sheet.png" id="3_11jj1"]
+
+[sub_resource type="Resource" id="Resource_s4ec8"]
+script = ExtResource("2_gwb47")
+SweepFromStartEdge = true
+SweepStepDeg = 6.0
+SweepStepDelay = 0.016
+InnerRadius = 10.0
+OuterRadius = 30.0
+AngleDeg = 70.0
+ArcCenterOffsetDeg = 0.0
+Damage = 0.0
+Cooldown = 0.15
+Windup = 0.0
+Active = 0.25
+metadata/_custom_type_script = "uid://cpybuc7cg7rl5"
+
+[sub_resource type="Resource" id="Resource_k5whp"]
+script = ExtResource("2_gwb47")
+SweepFromStartEdge = false
+SweepStepDeg = 6.0
+SweepStepDelay = 0.016
+InnerRadius = 15.0
+OuterRadius = 40.0
+AngleDeg = 120.0
+ArcCenterOffsetDeg = 0.0
+Damage = 0.0
+Cooldown = 1.0
+Windup = 0.0
+Active = 0.5
+metadata/_custom_type_script = "uid://cpybuc7cg7rl5"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phngh"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(0, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_un7sy"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(48, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkphk"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(96, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1scc2"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(144, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mhf5r"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(192, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_siec8"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(240, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rohr5"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(288, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nip8w"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(336, 48, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06afe"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u6f1l"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xowah"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbqb4"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_veb5s"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uhpsc"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(240, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jvvga"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phngh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_un7sy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mkphk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1scc2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mhf5r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_siec8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rohr5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nip8w")
+}],
+"loop": false,
+"name": &"heavy_attack",
+"speed": 14.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06afe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u6f1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xowah")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbqb4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_veb5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uhpsc")
+}],
+"loop": false,
+"name": &"light_attack",
+"speed": 15.0
+}]
+
+[node name="Sword" type="Node2D"]
+scale = Vector2(7, 7)
+script = ExtResource("1_58ehi")
+WeaponName = "Longsword"
+Description = "A well balanced two-handed melee weapon with good range."
+LightAttackConfig = SubResource("Resource_s4ec8")
+HeavyAttackConfig = SubResource("Resource_k5whp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_jvvga")
+animation = &"light_attack"
+
+[node name="Pivot" type="Node2D" parent="."]
+
+[node name="HitArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]

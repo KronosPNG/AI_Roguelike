@@ -1,0 +1,72 @@
+[gd_scene load_steps=10 format=3 uid="uid://x7kojflwwlva"]
+
+[ext_resource type="Script" uid="uid://bppn0nrxopvcr" path="res://scripts/attack_types/Projectile.cs" id="1_imdjo"]
+[ext_resource type="Texture2D" uid="uid://ybyolfk4e526" path="res://art/animations/weapons/giant_missile-Sheet.png" id="2_imdjo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_86edt"]
+radius = 12.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5atw1"]
+atlas = ExtResource("2_imdjo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jrgrh"]
+atlas = ExtResource("2_imdjo")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tua60"]
+atlas = ExtResource("2_imdjo")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxoun"]
+atlas = ExtResource("2_imdjo")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_7dxrr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5atw1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jrgrh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tua60")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxoun")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_u3w50"]
+radius = 12.0
+
+[node name="MagicMissile" type="RigidBody2D"]
+collision_layer = 8
+script = ExtResource("1_imdjo")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.499999, 0.5)
+scale = Vector2(7, 7)
+shape = SubResource("CircleShape2D_86edt")
+debug_color = Color(1, 1, 0, 0.419608)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(7, 7)
+sprite_frames = SubResource("SpriteFrames_7dxrr")
+frame_progress = 0.557472
+offset = Vector2(-3.43, 0)
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-0.499999, 0.499999)
+scale = Vector2(7, 7)
+shape = SubResource("CircleShape2D_u3w50")
+debug_color = Color(0.682353, 0, 0.0745098, 0.419608)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3a4xt78ppwt2"
-path="res://.godot/imported/bean_sprite_sheet.png-d066ea317fa7544cf3584c4460635f3b.ctex"
+uid="uid://diffyoy8gok5y"
+path="res://.godot/imported/sword_sprite_sheet.png-5d5010252333cd8cf608a15a9f972220.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/animations/bean_sprite_sheet.png"
-dest_files=["res://.godot/imported/bean_sprite_sheet.png-d066ea317fa7544cf3584c4460635f3b.ctex"]
+source_file="res://art/animations/weapons/sword_sprite_sheet.png"
+dest_files=["res://.godot/imported/sword_sprite_sheet.png-5d5010252333cd8cf608a15a9f972220.ctex"]
 
 [params]
 
