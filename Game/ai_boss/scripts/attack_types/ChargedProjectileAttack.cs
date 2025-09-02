@@ -42,7 +42,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
         }
 
         // Use the charge ratio calculated by the parent class
-        GD.Print($"[ChargedProjectileAttack] Using charge ratio from parent: {chargeRatio}, charge time: {_currentChargeTime}");
+        // GD.Print($"[ChargedProjectileAttack] Using charge ratio from parent: {chargeRatio}, charge time: {_currentChargeTime}");
 
         // Update projectile attack properties based on charge
         ConfigureProjectileAttackForCharge(chargedDamage, chargeRatio);
@@ -50,7 +50,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
         // Play attack animation first
         if (weapon._anim != null)
         {
-            GD.Print("[ChargedProjectileAttack] Playing attack animation");
+            // GD.Print("[ChargedProjectileAttack] Playing attack animation");
             string animName = weapon._isCurrentAttackHeavy ? "heavy_attack" : "light_attack";
             weapon._anim.Play(animName);
         }
@@ -62,7 +62,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
         // Execute the projectile attack using composition
         ProjectileAttack.Execute(weapon, target, facingLeft);
 
-        GD.Print($"ChargedProjectileAttack executed with {ProjectileAttack.ProjectileCount} projectiles at {ProjectileAttack.ProjectileSpeed} speed, lifetime: {ProjectileAttack.ProjectileLifetime}");
+        // GD.Print($"ChargedProjectileAttack executed with {ProjectileAttack.ProjectileCount} projectiles at {ProjectileAttack.ProjectileSpeed} speed, lifetime: {ProjectileAttack.ProjectileLifetime}");
 
         // Restore original values after execution
         RestoreOriginalValues();
@@ -82,7 +82,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
 
     private void ConfigureProjectileAttackForCharge(float chargedDamage, float chargeRatio)
     {
-        GD.Print($"[ChargedProjectileAttack] Configuring with charge ratio: {chargeRatio}");
+        // GD.Print($"[ChargedProjectileAttack] Configuring with charge ratio: {chargeRatio}");
         
         // Set the charged damage
         ProjectileAttack.Damage = chargedDamage;
@@ -92,7 +92,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
         {
             int scaledCount = Mathf.RoundToInt(Mathf.Lerp(1, MaxProjectileCount, chargeRatio));
             ProjectileAttack.ProjectileCount = Mathf.Clamp(scaledCount, 1, MaxProjectileCount);
-            GD.Print($"[ChargedProjectileAttack] Scaled projectile count: {ProjectileAttack.ProjectileCount} (from {_originalProjectileCount})");
+            // GD.Print($"[ChargedProjectileAttack] Scaled projectile count: {ProjectileAttack.ProjectileCount} (from {_originalProjectileCount})");
         }
         else
         {
@@ -104,7 +104,7 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
         {
             float speedMultiplier = Mathf.Lerp(MinProjectileSpeedMultiplier, MaxProjectileSpeedMultiplier, chargeRatio);
             ProjectileAttack.ProjectileSpeed = _originalProjectileSpeed * speedMultiplier;
-            GD.Print($"[ChargedProjectileAttack] Scaled projectile speed: {ProjectileAttack.ProjectileSpeed} (original: {_originalProjectileSpeed}, multiplier: {speedMultiplier})");
+            // GD.Print($"[ChargedProjectileAttack] Scaled projectile speed: {ProjectileAttack.ProjectileSpeed} (original: {_originalProjectileSpeed}, multiplier: {speedMultiplier})");
         }
         else
         {
@@ -122,22 +122,22 @@ public partial class ChargedProjectileAttack : ChargedAttack, IAttack, IChargeab
                 // This makes low charge values much more punishing
                 float exponentialRatio = Mathf.Pow(chargeRatio, LifeScalingExponent);
                 lifeMultiplier = Mathf.Lerp(MinProjectileLifeMultiplier, MaxProjectileLifeMultiplier, exponentialRatio);
-                GD.Print($"[ChargedProjectileAttack] Exponential life scaling - chargeRatio: {chargeRatio}, exponentialRatio: {exponentialRatio}, exponent: {LifeScalingExponent}");
+                // GD.Print($"[ChargedProjectileAttack] Exponential life scaling - chargeRatio: {chargeRatio}, exponentialRatio: {exponentialRatio}, exponent: {LifeScalingExponent}");
             }
             else
             {
                 // Linear scaling (original behavior)
                 lifeMultiplier = Mathf.Lerp(MinProjectileLifeMultiplier, MaxProjectileLifeMultiplier, chargeRatio);
-                GD.Print($"[ChargedProjectileAttack] Linear life scaling - chargeRatio: {chargeRatio}");
+                // GD.Print($"[ChargedProjectileAttack] Linear life scaling - chargeRatio: {chargeRatio}");
             }
             
             ProjectileAttack.ProjectileLifetime = _originalProjectileLifetime * lifeMultiplier;
-            GD.Print($"[ChargedProjectileAttack] Scaled projectile lifetime: {ProjectileAttack.ProjectileLifetime} (original: {_originalProjectileLifetime}, multiplier: {lifeMultiplier})");
+            // GD.Print($"[ChargedProjectileAttack] Scaled projectile lifetime: {ProjectileAttack.ProjectileLifetime} (original: {_originalProjectileLifetime}, multiplier: {lifeMultiplier})");
         }
         else
         {
             ProjectileAttack.ProjectileLifetime = _originalProjectileLifetime;
-            GD.Print($"[ChargedProjectileAttack] Using original projectile lifetime: {ProjectileAttack.ProjectileLifetime}");
+            // GD.Print($"[ChargedProjectileAttack] Using original projectile lifetime: {ProjectileAttack.ProjectileLifetime}");
         }
     }
     

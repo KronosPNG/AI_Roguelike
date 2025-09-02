@@ -81,28 +81,28 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
 
     public override void Execute(Weapon weapon, Vector2 target, bool facingLeft)
     {   
-        GD.Print("[ChargedAttack] Execute called");
+        // GD.Print("[ChargedAttack] Execute called");
         
         if (!_isCharging)
         {
-            GD.PrintErr("[ChargedAttack]Cannot execute charged attack: not currently charging.");
+            // GD.PrintErr("[ChargedAttack]Cannot execute charged attack: not currently charging.");
             return;
         }
 
-        GD.Print($"[ChargedAttack] Current charge time: {_currentChargeTime} seconds");
+        // GD.Print($"[ChargedAttack] Current charge time: {_currentChargeTime} seconds");
         // Calculate final damage based on charge time
         float chargedDamage = GetChargedDamage(_currentChargeTime);
 
-        GD.Print($"[ChargedAttack] Charged damage calculated: {chargedDamage}");
+        // GD.Print($"[ChargedAttack] Charged damage calculated: {chargedDamage}");
         if (_currentChargeTime < MinChargeTime)
         {
-            GD.Print("[ChargedAttack] Cannot execute charged attack: insufficient charge.");
-            GD.Print($"[ChargedAttack] Required min charge time: {MinChargeTime}, current charge time: {_currentChargeTime}");
+            // GD.Print("[ChargedAttack] Cannot execute charged attack: insufficient charge.");
+            // GD.Print($"[ChargedAttack] Required min charge time: {MinChargeTime}, current charge time: {_currentChargeTime}");
             Interrupt(weapon);
             return;
         }
 
-        GD.Print($"[ChargedAttack] Executing charged attack with {chargedDamage} damage after {_currentChargeTime} seconds of charging.");
+        // GD.Print($"[ChargedAttack] Executing charged attack with {chargedDamage} damage after {_currentChargeTime} seconds of charging.");
 
         // Clean up charging effects
         StopCharging(weapon);
@@ -125,7 +125,7 @@ public partial class ChargedAttack : AttackBase, IAttack, IChargeable
 
         weapon.CloseHitWindow(weapon._isCurrentAttackHeavy);
 
-        GD.Print($"Charged attack executed with {damage} damage!");
+        // GD.Print($"Charged attack executed with {damage} damage!");
     }
 
     public override void Interrupt(Weapon weapon)

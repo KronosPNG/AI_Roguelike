@@ -167,7 +167,7 @@ public partial class PlayerController : CharacterBody2D
 				// Allow dodging while charging - this cancels the charge
 				if (Input.IsActionJustPressed("dodge"))
 				{
-					GD.Print("Dodge input while charging - cancelling charge");
+					// GD.Print("Dodge input while charging - cancelling charge");
 					_equippedWeapon.CancelCharge();
 					_isChargingAttack = false;
 					_dodgeInputTimer = DodgeInputLeniency;
@@ -185,7 +185,7 @@ public partial class PlayerController : CharacterBody2D
 		{
 			if (Input.IsActionJustPressed("light_attack") || Input.IsActionJustPressed("heavy_attack"))
 			{
-				GD.Print($"Attack input blocked - Player state: {_state}");
+				// GD.Print($"Attack input blocked - Player state: {_state}");
 			}
 
 			return;
@@ -204,18 +204,18 @@ public partial class PlayerController : CharacterBody2D
 		// Handle light attack input
 		if (Input.IsActionJustPressed("light_attack"))
 		{
-			GD.Print("Light attack input received");
+			// GD.Print("Light attack input received");
 			if (!_equippedWeapon.CanStartAttack(false)) return;
 
 			// Check if weapon has a chargeable light attack
 			if (_equippedWeapon.HasChargeableAttack(false))
 			{
-				GD.Print("- Transitioning to Charging");
+				// GD.Print("- Transitioning to Charging");
 				StartChargingAttack(false);
 			}
 			else
 			{
-				GD.Print("- Transitioning to Attacking");
+				// GD.Print("- Transitioning to Attacking");
 				TransitionToState(PlayerState.Attacking);
 				OnLightAttack();
 			}
@@ -223,19 +223,19 @@ public partial class PlayerController : CharacterBody2D
 		// Handle heavy attack input  
 		else if (Input.IsActionJustPressed("heavy_attack"))
 		{
-			GD.Print("Heavy attack input received");
+			// GD.Print("Heavy attack input received");
 			if (!_equippedWeapon.CanStartAttack(true)) return;
 			;
 
 			// Check if this weapon has a chargeable heavy attack
 			if (_equippedWeapon.HasChargeableAttack(true))
 			{
-				GD.Print("- Transitioning to Charging");
+				// GD.Print("- Transitioning to Charging");
 				StartChargingAttack(true);
 			}
 			else
 			{
-				GD.Print("- Transitioning to Attacking");
+				// GD.Print("- Transitioning to Attacking");
 				TransitionToState(PlayerState.Attacking);
 				OnHeavyAttack();
 			}
@@ -260,14 +260,14 @@ public partial class PlayerController : CharacterBody2D
 			// Button released - execute or cancel the charged attack
 			if (_equippedWeapon.CanReleaseCharge())
 			{
-				GD.Print("Charge released successfully");
+				// GD.Print("Charge released successfully");
 				TransitionToState(PlayerState.Attacking);
 				ExecuteChargedAttack(_isHeavyCharge);
 			}
 			else
 			{
 				// Charge was too short, cancel and return to appropriate state
-				GD.Print("Charge too short, cancelling charge");
+				// GD.Print("Charge too short, cancelling charge");
 
 				_equippedWeapon.CancelCharge();
 				Vector2 currentInput = ReadDirection();
@@ -306,25 +306,25 @@ public partial class PlayerController : CharacterBody2D
 		{
 			// play dodge animation; movement will be handled in ApplyMovementByState
 			case PlayerState.Dodge:
-				GD.Print("Entering Dodge state");
+				// GD.Print("Entering Dodge state");
 				// Set the sprite's flip based on direction
 				_sprite.FlipH = _dodgeDirection.X < 0 || _lastHorizontalFacing < 0;
 				_sprite.Play("dodge");
 				break;
 			case PlayerState.Walking:
-				GD.Print("Entering Walking state");
+				// GD.Print("Entering Walking state");
 				// animation will be set in UpdateAnimationIfNeeded()
 				break;
 			case PlayerState.Idle:
-				GD.Print("Entering Idle state");
+				// GD.Print("Entering Idle state");
 				// animation set later
 				break;
 			case PlayerState.Attacking:
-				GD.Print("Entering Attacking state");
+				// GD.Print("Entering Attacking state");
 				// animation will be triggered by weapon	
 				break;
 			case PlayerState.Charging:
-				GD.Print("Entering Charging state");
+				// GD.Print("Entering Charging state");
 				// animation will be triggered by weapon
 				break;
 		}
@@ -488,18 +488,18 @@ public partial class PlayerController : CharacterBody2D
 	// --- Weapon Signal Handlers ---------------
 	private void OnWeaponAttackStarted(string attackName)
 	{
-		GD.Print($"Weapon attack started: {attackName}");
+		// GD.Print($"Weapon attack started: {attackName}");
 		// Weapon attack has started, ensure we're in attacking state
 		if (_state != PlayerState.Attacking)
 		{
-			GD.Print($"Player not in attacking state ({_state}), transitioning now");
+			// GD.Print($"Player not in attacking state ({_state}), transitioning now");
 			TransitionToState(PlayerState.Attacking);
 		}
 	}
 
 	private void OnWeaponAttackEnded(string attackName)
 	{
-		GD.Print($"Weapon attack ended: {attackName}, current player state: {_state}");
+		// GD.Print($"Weapon attack ended: {attackName}, current player state: {_state}");
 
 		// Weapon attack has ended, return to appropriate state
 		if (_state == PlayerState.Attacking)
@@ -507,13 +507,13 @@ public partial class PlayerController : CharacterBody2D
 			Vector2 currentInput = ReadDirection();
 			if (currentInput.Length() > 0)
 			{
-				GD.Print("Transitioning from Attacking to Walking");
+				// GD.Print("Transitioning from Attacking to Walking");
 				TransitionToState(PlayerState.Walking);
 			}
 
 			else
 			{
-				GD.Print("Transitioning from Attacking to Idle");
+				// GD.Print("Transitioning from Attacking to Idle");
 				TransitionToState(PlayerState.Idle);
 			}
 
@@ -521,7 +521,7 @@ public partial class PlayerController : CharacterBody2D
 
 		else
 		{
-			GD.Print($"Player was not in Attacking state when weapon ended attack (state: {_state})");
+			// GD.Print($"Player was not in Attacking state when weapon ended attack (state: {_state})");
 		}
 	}
 

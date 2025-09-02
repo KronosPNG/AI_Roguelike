@@ -180,6 +180,7 @@ WeaponName = "Longsword"
 Description = "A well balanced two-handed melee weapon with good range."
 LightAttackConfig = SubResource("Resource_s4ec8")
 HeavyAttackConfig = SubResource("Resource_k5whp")
+AutoApplyDamage = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
@@ -188,8 +189,11 @@ animation = &"idle"
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+visible = false
 
 [node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
 visible = false

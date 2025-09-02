@@ -144,7 +144,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wxo2p"]
-size = Vector2(42, 84)
+size = Vector2(42, 98)
 
 [node name="Bean" type="CharacterBody2D"]
 collision_layer = 4
@@ -182,6 +182,8 @@ metadata/_aseprite_wizard_config_ = {
 metadata/_aseprite_wizard_source_file_hash_ = "e8f29a3492ff11e531f9e5072f607a06"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 7)
 shape = SubResource("RectangleShape2D_wxo2p")
 
 [node name="Hand" type="Node2D" parent="."]

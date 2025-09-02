@@ -27,10 +27,6 @@ public partial class Pedestal : StaticBody2D
 	// ---- Item Info ----
 	private string _itemName = "";
 	private string _itemDescription = "";
-
-	// ---- Visual Effects ----
-	[Export] public bool EnableGlow = true;
-	[Export] public float GlowSpeed = 2f;
 	private float _time = 0f;
 
 	public override void _Ready()
@@ -77,13 +73,6 @@ public partial class Pedestal : StaticBody2D
 			HandleInteraction(_playerInRange);
 		}
 
-		// Glow effect for item sprite
-		if (EnableGlow && _itemSprite != null && _itemSprite.Visible)
-		{
-			_time += (float)delta * GlowSpeed;
-			float alpha = 0.8f + 0.2f * Mathf.Sin(_time);
-			_itemSprite.Modulate = new Color(1f, 1f, 1f, alpha);
-		}
 	}
 
 	private void SetupItemDisplay()

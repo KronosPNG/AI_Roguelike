@@ -50,6 +50,7 @@ collision_layer = 8
 script = ExtResource("1_imdjo")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(-0.499999, 0.5)
 scale = Vector2(7, 7)
 shape = SubResource("CircleShape2D_86edt")
@@ -61,11 +62,12 @@ sprite_frames = SubResource("SpriteFrames_7dxrr")
 frame_progress = 0.557472
 offset = Vector2(-3.43, 0)
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="HitArea" type="Area2D" parent="."]
 collision_layer = 16
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitArea"]
+visible = false
 position = Vector2(-0.499999, 0.499999)
 scale = Vector2(7, 7)
 shape = SubResource("CircleShape2D_u3w50")

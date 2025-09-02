@@ -173,11 +173,11 @@ public partial class Weapon : Node2D, IPedestalItem
 	// Internal attack method
 	private void Attack(Vector2 mouseGlobalPos, bool isHeavy)
 	{
-		GD.Print($"Attack called: isHeavy={isHeavy}, weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
+		// GD.Print($"Attack called: isHeavy={isHeavy}, weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
 
 		if (!CanStartAttack(isHeavy))
 		{
-			GD.Print($"Attack blocked by CanStartAttack: weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
+			// GD.Print($"Attack blocked by CanStartAttack: weapon state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
 			return;
 		}
 
@@ -190,25 +190,25 @@ public partial class Weapon : Node2D, IPedestalItem
 	// By checking the current state and cooldown timers
 	public bool CanStartAttack(bool isHeavy)
 	{
-		GD.Print($"CanStartAttack check: isHeavy={isHeavy}, state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
+		// GD.Print($"CanStartAttack check: isHeavy={isHeavy}, state={_state}, lightCooldown={_lightCooldownTimer}, heavyCooldown={_heavyCooldownTimer}");
 
 		if (_state != WeaponState.Ready)
 		{
-			GD.Print($"Attack blocked: weapon state is {_state}, not Ready");
+			// GD.Print($"Attack blocked: weapon state is {_state}, not Ready");
 			return false;
 		}
 		if (!isHeavy && _lightCooldownTimer > 0f)
 		{
-			GD.Print($"Light attack blocked: cooldown timer {_lightCooldownTimer}");
+			// GD.Print($"Light attack blocked: cooldown timer {_lightCooldownTimer}");
 			return false;
 		}
 		if (isHeavy && _heavyCooldownTimer > 0f)
 		{
-			GD.Print($"Heavy attack blocked: cooldown timer {_heavyCooldownTimer}");
+			// GD.Print($"Heavy attack blocked: cooldown timer {_heavyCooldownTimer}");
 			return false;
 		}
 
-		GD.Print("Attack allowed");
+		// GD.Print("Attack allowed");
 		return true;
 	}
 	
@@ -291,7 +291,7 @@ public partial class Weapon : Node2D, IPedestalItem
     {
 		if (!_isCharging || _isCurrentAttackHeavy)
 		{
-			GD.Print("Charge not released!");
+			// GD.Print("Charge not released!");
 			return;
 		}
 		
@@ -308,7 +308,7 @@ public partial class Weapon : Node2D, IPedestalItem
     {
 		if (_currentChargingAttack == null)
 		{
-			GD.PrintErr("No current charging attack to execute!");
+			// GD.PrintErr("No current charging attack to execute!");
 			return;
 		}
 
@@ -327,7 +327,7 @@ public partial class Weapon : Node2D, IPedestalItem
         // Execute the charged attack
         bool facingAtStart = _facingLeft;
 
-        GD.Print($"[Weapon]Executing charged attack: isHeavy={_isCurrentAttackHeavy}, target={_pendingHitTarget}, facingLeft={facingAtStart}");
+        // GD.Print($"[Weapon]Executing charged attack: isHeavy={_isCurrentAttackHeavy}, target={_pendingHitTarget}, facingLeft={facingAtStart}");
         _currentChargingAttack.Execute(this, _pendingHitTarget, facingAtStart);
         
         // Clean up charging state
@@ -407,30 +407,32 @@ public partial class Weapon : Node2D, IPedestalItem
 
 	public  void CloseHitWindow(bool isHeavy)
 	{
-		GD.Print($"WeaponBase.CloseHitWindow called: isHeavy={isHeavy}");
+		// GD.Print($"WeaponBase.CloseHitWindow called: isHeavy={isHeavy}");
 		ResetWeaponState(isHeavy);
 	}
 
 	// Reset the weapon state and hit detection
 	public  void ResetWeaponState(bool isHeavy)
 	{
-		GD.Print($"WeaponBase.ResetWeaponState called: isHeavy={isHeavy}, current state={_state}");
+		// GD.Print($"WeaponBase.ResetWeaponState called: isHeavy={isHeavy}, current state={_state}");
 		_state = WeaponState.Ready;
 		_pendingHitTarget = Vector2.Zero;
 
 		// Reset list of already hit targets 
 		_alreadyHit.Clear();
 
-		GD.Print($"About to emit AttackEnded signal for {(isHeavy ? "heavy" : "light")} attack");
+		// GD.Print($"About to emit AttackEnded signal for {(isHeavy ? "heavy" : "light")} attack");
 		EmitSignal(nameof(AttackEnded), isHeavy ? "heavy" : "light");
-		GD.Print($"AttackEnded signal emitted, weapon state is now {_state}");
+		// GD.Print($"AttackEnded signal emitted, weapon state is now {_state}");
 	}
 
 	// -------------------------
 	// Collision handling
 	// -------------------------
 	private void OnBodyEntered(Node body)
-	{
+	{	
+
+		GD.Print($"Weapon hit detected on body: {body.Name}");
 		// Called when a physics body enters the hit area while Monitoring=true.
 		// We only act during Active state.
 		if (_state != WeaponState.Active) return;
@@ -438,9 +440,11 @@ public partial class Weapon : Node2D, IPedestalItem
 		if (_alreadyHit.Contains(body)) return;
 
 		_alreadyHit.Add(body);
+		
+		GD.Print($"Weapon registering hit on body: {body.Name}");
 
 		float damage = _isCurrentAttackHeavy ? HeavyAttackConfig.Damage : LightAttackConfig.Damage;
-
+	
 		// Emit signal so other systems (ui, sfx, particles) can respond
 		if (body is Node2D node2d)
 			EmitSignal(nameof(EntityHit), node2d, damage);
@@ -448,9 +452,11 @@ public partial class Weapon : Node2D, IPedestalItem
 		// Optionally auto-apply damage directly.
 		if (AutoApplyDamage)
 		{
+			GD.Print($"Weapon auto-applying {damage} damage to {body.Name}");
+
 			// Attempt to call configured method
 			if (body.HasMethod(EnemyDamageMethodName))
-			{
+			{	
 				body.Call(EnemyDamageMethodName, damage);
 			}
 			else
@@ -458,7 +464,7 @@ public partial class Weapon : Node2D, IPedestalItem
 				// fallback: try common names
 				if (body.HasMethod("ApplyDamage")) body.Call("ApplyDamage", damage);
 				else if (body.HasMethod("TakeDamage")) body.Call("TakeDamage", damage);
-				else GD.Print($"Weapon: hit {body.Name} for {damage}, but no damage method found.");
+				// else GD.Print($"Weapon: hit {body.Name} for {damage}, but no damage method found.");
 			}
 		}
 	}

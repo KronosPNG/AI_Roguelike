@@ -15,6 +15,7 @@ ProjectileLifetime = 1.0
 ProjectileCount = 1
 SpreadAngleDeg = 0.0
 SpawnDistanceFromPlayer = 0.0
+DestroyOnHit = true
 Damage = 5.0
 Cooldown = 0.0
 Windup = 0.0
@@ -55,6 +56,7 @@ ProjectileLifetime = 3.0
 ProjectileCount = 3
 SpreadAngleDeg = 20.0
 SpawnDistanceFromPlayer = 0.0
+DestroyOnHit = true
 Damage = 5.0
 Cooldown = 0.0
 Windup = 0.25
@@ -246,6 +248,7 @@ WeaponName = "Bow"
 Description = ""
 LightAttackConfig = SubResource("Resource_hl64m")
 HeavyAttackConfig = SubResource("Resource_rs3f0")
+AutoApplyDamage = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
@@ -258,6 +261,7 @@ frame_progress = 1.0
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+visible = false
 
 [node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
 visible = false

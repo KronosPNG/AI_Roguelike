@@ -10,6 +10,7 @@ public partial class ProjectileAttack : AttackBase, IAttack, IShootable
     [Export] public int ProjectileCount = 1; // Number of projectiles per attack
     [Export] public float SpreadAngleDeg = 0f; // Spread angle for multiple projectiles
     [Export] public float SpawnDistanceFromPlayer = 0f; // Distance from player in direction of target
+    [Export] public bool DestroyOnHit = true; // Destroy projectile on hit
 
     public override void Execute(Weapon weapon, Vector2 target, bool facingLeft)
     {
@@ -76,7 +77,8 @@ public partial class ProjectileAttack : AttackBase, IAttack, IShootable
             ProjectileSpeed,
             Damage,
             ProjectileLifetime,
-            weapon.OwnerCharacter // Pass owner to avoid self-damage
+            weapon.OwnerCharacter, // Pass owner to avoid self-damage
+            DestroyOnHit
         );
     }
 }

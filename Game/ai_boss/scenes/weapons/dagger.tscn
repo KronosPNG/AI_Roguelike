@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_mhf5r"]
 script = ExtResource("2_1itfw")
 InnerRadius = 5.0
-OuterRadius = 20.0
+OuterRadius = 25.0
 AngleDeg = 30.0
 ArcCenterOffsetDeg = 0.0
 Damage = 0.0
@@ -171,6 +171,7 @@ WeaponName = "Dagger"
 Description = "A short blade,  nimble and fast for quick attacks."
 LightAttackConfig = SubResource("Resource_mhf5r")
 HeavyAttackConfig = SubResource("Resource_siec8")
+AutoApplyDamage = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
@@ -179,8 +180,11 @@ animation = &"idle"
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 2
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+visible = false
 
 [node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
 visible = false

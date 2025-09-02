@@ -16,6 +16,7 @@ ProjectileLifetime = 5.0
 ProjectileCount = 1
 SpreadAngleDeg = 0.0
 SpawnDistanceFromPlayer = 100.0
+DestroyOnHit = true
 Damage = 2.0
 Cooldown = 0.0
 Windup = 0.25
@@ -30,6 +31,7 @@ ProjectileLifetime = 5.0
 ProjectileCount = 1
 SpreadAngleDeg = 0.0
 SpawnDistanceFromPlayer = 150.0
+DestroyOnHit = false
 Damage = 10.0
 Cooldown = 0.0
 Windup = 0.0
@@ -345,6 +347,7 @@ WeaponName = "Staff"
 Description = ""
 LightAttackConfig = SubResource("Resource_rh371")
 HeavyAttackConfig = SubResource("Resource_hiblv")
+AutoApplyDamage = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
@@ -357,6 +360,7 @@ frame_progress = 1.0
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+visible = false
 
 [node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
 visible = false

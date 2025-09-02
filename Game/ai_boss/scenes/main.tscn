@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=4 uid="uid://1nf46nrhiyd1"]
+[gd_scene load_steps=10 format=4 uid="uid://1nf46nrhiyd1"]
 
 [ext_resource type="Script" uid="uid://ue8mbbs06g27" path="res://scripts/Main.cs" id="1_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://oq0rua0ik614" path="res://art/tileset.aseprite" id="1_sugp2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://djl2qfaytujjk" path="res://scenes/weapons/dagger.tscn" id="4_tefeu"]
 [ext_resource type="PackedScene" uid="uid://rf3kky6lb4ed" path="res://scenes/weapons/staff.tscn" id="5_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://3ck2mhc1l2m0" path="res://scenes/weapons/bow.tscn" id="6_tipki"]
+[ext_resource type="PackedScene" uid="uid://d02snf7r66hnm" path="res://scenes/objects/dummy.tscn" id="7_o6xl0"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jyhfs"]
 texture = ExtResource("1_sugp2")
@@ -62,3 +63,7 @@ ItemScene = ExtResource("5_o6xl0")
 [node name="Pedestal3" parent="." instance=ExtResource("3_sugp2")]
 position = Vector2(-560, -336)
 ItemScene = ExtResource("6_tipki")
+
+[node name="Dummy" parent="." instance=ExtResource("7_o6xl0")]
+position = Vector2(855, -2)
+FlipSpriteHorizontally = true
