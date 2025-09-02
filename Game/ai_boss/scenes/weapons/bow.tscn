@@ -1,10 +1,11 @@
-[gd_scene load_steps=30 format=3 uid="uid://3ck2mhc1l2m0"]
+[gd_scene load_steps=33 format=3 uid="uid://3ck2mhc1l2m0"]
 
 [ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_rs3f0"]
 [ext_resource type="Texture2D" uid="uid://c6pcpe0mr10b6" path="res://art/animations/weapons/bow-Sheet.png" id="2_pevdf"]
 [ext_resource type="PackedScene" uid="uid://dufefxrpx60dr" path="res://scenes/weapons/projectiles/arrow.tscn" id="2_rs3f0"]
 [ext_resource type="Script" uid="uid://behghmgcgacq5" path="res://scripts/attack_types/ProjectileAttack.cs" id="2_wr7d4"]
 [ext_resource type="Script" uid="uid://yslsc0gfiae4" path="res://scripts/attack_types/ChargedProjectileAttack.cs" id="4_cwr1y"]
+[ext_resource type="Texture2D" uid="uid://bo352d1lspc8b" path="res://art/static_sprites/weapons-Sheet.png" id="6_0hpek"]
 
 [sub_resource type="Resource" id="Resource_cwr1y"]
 script = ExtResource("2_wr7d4")
@@ -223,6 +224,21 @@ animations = [{
 "speed": 36.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_t87uk"]
+atlas = ExtResource("6_0hpek")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jga22"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t87uk")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}]
+
 [node name="Bow" type="Node2D"]
 scale = Vector2(7, 7)
 script = ExtResource("1_rs3f0")
@@ -242,3 +258,8 @@ frame_progress = 1.0
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_jga22")
+animation = &"idle"

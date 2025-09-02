@@ -1,9 +1,10 @@
-[gd_scene load_steps=21 format=3 uid="uid://djl2qfaytujjk"]
+[gd_scene load_steps=25 format=3 uid="uid://djl2qfaytujjk"]
 
 [ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_j34lm"]
 [ext_resource type="Script" uid="uid://di2v6trtuujfe" path="res://scripts/attack_types/CrescentMeleeAttack.cs" id="2_1itfw"]
 [ext_resource type="Script" uid="uid://cpybuc7cg7rl5" path="res://scripts/attack_types/SweepingCrescentMeleeAttack.cs" id="3_2j8e1"]
 [ext_resource type="Texture2D" uid="uid://b3tua3qouv2v" path="res://art/animations/weapons/dagger_sprite_sheet.png" id="4_syark"]
+[ext_resource type="Texture2D" uid="uid://bo352d1lspc8b" path="res://art/static_sprites/weapons-Sheet.png" id="5_1itfw"]
 
 [sub_resource type="Resource" id="Resource_mhf5r"]
 script = ExtResource("2_1itfw")
@@ -60,6 +61,10 @@ region = Rect2(160, 32, 32, 32)
 atlas = ExtResource("4_syark")
 region = Rect2(192, 32, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_j34lm"]
+atlas = ExtResource("4_syark")
+region = Rect2(0, 0, 28, 32)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rohr5"]
 atlas = ExtResource("4_syark")
 region = Rect2(0, 0, 32, 32)
@@ -114,6 +119,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_j34lm")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_rohr5")
 }, {
 "duration": 1.0,
@@ -136,6 +149,21 @@ animations = [{
 "speed": 25.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2j8e1"]
+atlas = ExtResource("5_1itfw")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_syark"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2j8e1")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}]
+
 [node name="Dagger" type="Node2D"]
 scale = Vector2(7, 7)
 script = ExtResource("1_j34lm")
@@ -146,10 +174,15 @@ HeavyAttackConfig = SubResource("Resource_siec8")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
-animation = &"light_attack"
+animation = &"idle"
 
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_syark")
+animation = &"idle"

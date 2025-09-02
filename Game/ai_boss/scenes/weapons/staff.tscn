@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://rf3kky6lb4ed"]
+[gd_scene load_steps=48 format=3 uid="uid://rf3kky6lb4ed"]
 
 [ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_lakth"]
 [ext_resource type="PackedScene" uid="uid://btlvl7kus6crp" path="res://scenes/weapons/projectiles/magic_missile.tscn" id="2_rh371"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://behghmgcgacq5" path="res://scripts/attack_types/ProjectileAttack.cs" id="3_j3civ"]
 [ext_resource type="PackedScene" uid="uid://x7kojflwwlva" path="res://scenes/weapons/projectiles/giant_missile.tscn" id="4_hiblv"]
 [ext_resource type="Script" uid="uid://yslsc0gfiae4" path="res://scripts/attack_types/ChargedProjectileAttack.cs" id="4_lakth"]
+[ext_resource type="Texture2D" uid="uid://bo352d1lspc8b" path="res://art/static_sprites/weapons-Sheet.png" id="7_j3civ"]
 
 [sub_resource type="Resource" id="Resource_rh371"]
 script = ExtResource("3_j3civ")
@@ -322,7 +323,22 @@ animations = [{
 "speed": 22.0
 }]
 
-[node name="Stafff" type="Node2D"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_omn4a"]
+atlas = ExtResource("7_j3civ")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cdeft"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_omn4a")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}]
+
+[node name="Staff" type="Node2D"]
 scale = Vector2(7, 7)
 script = ExtResource("1_lakth")
 WeaponName = "Staff"
@@ -341,3 +357,8 @@ frame_progress = 1.0
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_cdeft")
+animation = &"idle"

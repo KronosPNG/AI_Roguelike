@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3 uid="uid://c28gni2g3ftbe"]
+
+[ext_resource type="Script" uid="uid://qjcmmcdg62ew" path="res://scripts/interactive_elements/pedestal/Pedestal.cs" id="1_aedhk"]
+[ext_resource type="Texture2D" uid="uid://cxli5nldq3ih7" path="res://art/objects/pedestal.png" id="1_hsd6d"]
+[ext_resource type="PackedScene" uid="uid://cqiyycxt5b10s" path="res://scenes/weapons/sword.tscn" id="2_vgg7g"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aedhk"]
+size = Vector2(16, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aedhk"]
+atlas = ExtResource("1_hsd6d")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vgg7g"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aedhk")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hsd6d"]
+radius = 115.017
+
+[node name="Pedestal" type="StaticBody2D"]
+collision_layer = 14
+collision_mask = 4
+script = ExtResource("1_aedhk")
+ItemScene = ExtResource("2_vgg7g")
+
+[node name="PedestalCollision" type="CollisionShape2D" parent="."]
+position = Vector2(-2.72478e-07, 2)
+scale = Vector2(7, 7)
+shape = SubResource("RectangleShape2D_aedhk")
+
+[node name="PedestalSprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(7, 7)
+sprite_frames = SubResource("SpriteFrames_vgg7g")
+
+[node name="InteractArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+shape = SubResource("CircleShape2D_hsd6d")
+
+[node name="ItemSprite" type="AnimatedSprite2D" parent="."]
+
+[node name="InteractPrompt" type="Label" parent="."]
+offset_top = -60.0
+offset_bottom = -60.0
+horizontal_alignment = 1
+vertical_alignment = 1

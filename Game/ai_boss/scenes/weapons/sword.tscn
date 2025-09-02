@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://cqiyycxt5b10s"]
+[gd_scene load_steps=25 format=3 uid="uid://cqiyycxt5b10s"]
 
 [ext_resource type="Script" uid="uid://bv30ncfyohfjq" path="res://scripts/player_inputs/Weapon.cs" id="1_58ehi"]
 [ext_resource type="Script" uid="uid://cpybuc7cg7rl5" path="res://scripts/attack_types/SweepingCrescentMeleeAttack.cs" id="2_gwb47"]
 [ext_resource type="Texture2D" uid="uid://diffyoy8gok5y" path="res://art/animations/weapons/sword_sprite_sheet.png" id="3_11jj1"]
+[ext_resource type="Texture2D" uid="uid://bo352d1lspc8b" path="res://art/static_sprites/weapons-Sheet.png" id="4_gwb47"]
 
 [sub_resource type="Resource" id="Resource_s4ec8"]
 script = ExtResource("2_gwb47")
@@ -66,6 +67,10 @@ region = Rect2(288, 48, 48, 48)
 atlas = ExtResource("3_11jj1")
 region = Rect2(336, 48, 48, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_58ehi"]
+atlas = ExtResource("3_11jj1")
+region = Rect2(0, 0, 48, 48)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_06afe"]
 atlas = ExtResource("3_11jj1")
 region = Rect2(0, 0, 48, 48)
@@ -123,6 +128,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_58ehi")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_06afe")
 }, {
 "duration": 1.0,
@@ -145,6 +158,21 @@ animations = [{
 "speed": 15.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_11jj1"]
+atlas = ExtResource("4_gwb47")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dx2j5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_11jj1")
+}],
+"loop": false,
+"name": &"idle",
+"speed": 0.0
+}]
+
 [node name="Sword" type="Node2D"]
 scale = Vector2(7, 7)
 script = ExtResource("1_58ehi")
@@ -155,10 +183,15 @@ HeavyAttackConfig = SubResource("Resource_k5whp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_jvvga")
-animation = &"light_attack"
+animation = &"idle"
 
 [node name="Pivot" type="Node2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
+
+[node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_dx2j5")
+animation = &"idle"

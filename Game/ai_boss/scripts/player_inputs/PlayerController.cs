@@ -5,7 +5,8 @@ public partial class PlayerController : CharacterBody2D
 {
 	//---- Node References ----
 	private AnimatedSprite2D _sprite;
-	private Weapon _equippedWeapon;
+	public Weapon _equippedWeapon;
+	public PackedScene _equippedWeaponScene; // Store the PackedScene for weapon swapping
 	private Node2D _handNode;
 
 	//---- Character Data ----
@@ -172,7 +173,7 @@ public partial class PlayerController : CharacterBody2D
 					_dodgeInputTimer = DodgeInputLeniency;
 					TransitionToState(PlayerState.DodgePrep);
 				}
-				break;	
+				break;
 		}
 	}
 
@@ -224,7 +225,7 @@ public partial class PlayerController : CharacterBody2D
 		{
 			GD.Print("Heavy attack input received");
 			if (!_equippedWeapon.CanStartAttack(true)) return;
-;
+			;
 
 			// Check if this weapon has a chargeable heavy attack
 			if (_equippedWeapon.HasChargeableAttack(true))
@@ -245,10 +246,10 @@ public partial class PlayerController : CharacterBody2D
 	{
 		bool lightPressed = Input.IsActionPressed("light_attack");
 		bool heavyPressed = Input.IsActionPressed("heavy_attack");
-		
+
 		// Check if the relevant button is still held
 		bool shouldContinueCharging = _isHeavyCharge ? heavyPressed : lightPressed;
-		
+
 		if (shouldContinueCharging)
 		{
 			// Continue charging - weapon handles the charging logic
@@ -400,7 +401,7 @@ public partial class PlayerController : CharacterBody2D
 			// While charging, play walking animation if moving, idle if stationary
 			Vector2 currentInput = ReadDirection();
 			_sprite.FlipH = _lastHorizontalFacing < 0;
-			
+
 			if (currentInput.Length() > 0)
 			{
 				if (_sprite.Animation != "walking")
@@ -435,19 +436,26 @@ public partial class PlayerController : CharacterBody2D
 
 	public void EquipWeapon(PackedScene weaponScene)
 	{
-		if (weaponScene == null) return;
-
+		// If we reach this point, we have a new weapon to equip
 		if (_equippedWeapon != null)
 		{
 			// Disconnect signals
 			_equippedWeapon.AttackStarted -= OnWeaponAttackStarted;
 			_equippedWeapon.AttackEnded -= OnWeaponAttackEnded;
-			
+
 			_equippedWeapon.Unequip();
 			_equippedWeapon.QueueFree();
 			_equippedWeapon = null;
 		}
 
+		if (weaponScene == null)
+		{
+			_equippedWeaponScene = null;
+			return;
+		}
+
+		// Store the PackedScene reference
+		_equippedWeaponScene = weaponScene;
 
 		var weaponInstance = weaponScene.Instantiate() as Weapon;
 		if (weaponInstance == null) return;
@@ -455,7 +463,6 @@ public partial class PlayerController : CharacterBody2D
 		_handNode.AddChild(weaponInstance);
 
 		CallDeferred(nameof(CallEquipDeferred), weaponInstance);
-		
 	}
 
 	private void CallEquipDeferred(Weapon weapon)
@@ -518,4 +525,5 @@ public partial class PlayerController : CharacterBody2D
 		}
 	}
 
+	public PackedScene GetCurrentWeaponScene() => _equippedWeaponScene;
 }

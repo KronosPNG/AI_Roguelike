@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=4 uid="uid://1nf46nrhiyd1"]
+[gd_scene load_steps=9 format=4 uid="uid://1nf46nrhiyd1"]
 
 [ext_resource type="Script" uid="uid://ue8mbbs06g27" path="res://scripts/Main.cs" id="1_jyhfs"]
 [ext_resource type="Texture2D" uid="uid://oq0rua0ik614" path="res://art/tileset.aseprite" id="1_sugp2"]
+[ext_resource type="PackedScene" uid="uid://c28gni2g3ftbe" path="res://scenes/objects/pedestal.tscn" id="3_sugp2"]
+[ext_resource type="PackedScene" uid="uid://djl2qfaytujjk" path="res://scenes/weapons/dagger.tscn" id="4_tefeu"]
+[ext_resource type="PackedScene" uid="uid://rf3kky6lb4ed" path="res://scenes/weapons/staff.tscn" id="5_o6xl0"]
+[ext_resource type="PackedScene" uid="uid://3ck2mhc1l2m0" path="res://scenes/weapons/bow.tscn" id="6_tipki"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jyhfs"]
 texture = ExtResource("1_sugp2")
@@ -46,3 +50,15 @@ tile_set = SubResource("TileSet_tbgi4")
 [node name="Camera2D" type="Camera2D" parent="."]
 scale = Vector2(-287.196, -336.102)
 zoom = Vector2(0.4, 0.4)
+
+[node name="Pedestal" parent="." instance=ExtResource("3_sugp2")]
+position = Vector2(-1008, -336)
+ItemScene = ExtResource("4_tefeu")
+
+[node name="Pedestal2" parent="." instance=ExtResource("3_sugp2")]
+position = Vector2(-784, -336)
+ItemScene = ExtResource("5_o6xl0")
+
+[node name="Pedestal3" parent="." instance=ExtResource("3_sugp2")]
+position = Vector2(-560, -336)
+ItemScene = ExtResource("6_tipki")

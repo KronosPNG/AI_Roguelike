@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-public partial class Weapon : Node2D
+public partial class Weapon : Node2D, IPedestalItem
 {
 	// ---- Node References ----
 	public AnimatedSprite2D _anim;
@@ -29,6 +29,10 @@ public partial class Weapon : Node2D
 	//---- Non-Mechanical Properties ----
 	[Export] public string WeaponName = "Weapon";
 	[Export] public string Description = "A basic weapon.";
+
+	//---- Pedestal Display ----
+	public AnimatedSprite2D PedestalDisplaySprite; // Optional separate sprite for pedestal display
+	[Export] public Vector2 PedestalDisplayScale = new Vector2(7f, 7f); // Scale to use for pedestal display
 
 	//---- Attack Configuration ----
 	[Export] public AttackBase LightAttackConfig;
@@ -65,6 +69,7 @@ public partial class Weapon : Node2D
 		_anim = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
 		_hitArea = GetNodeOrNull<Area2D>("HitArea");
 		_hitAreaShape = GetNodeOrNull<CollisionPolygon2D>("HitArea/CollisionPolygon2D");
+		PedestalDisplaySprite = GetNodeOrNull<AnimatedSprite2D>("PedestalDisplaySprite");
 
 		if (_anim == null)
 		{
@@ -76,6 +81,10 @@ public partial class Weapon : Node2D
 		{
 			GD.PrintErr("Sword: could not find Area2D node 'HitArea'");
 			return;
+		} else
+		{
+			_hitArea.Monitoring = false;
+			_hitArea.BodyEntered += OnBodyEntered;
 		}
 
 		if (_hitAreaShape == null)
@@ -84,11 +93,15 @@ public partial class Weapon : Node2D
 			return;
 		}
 
-		if (_hitArea != null)
+		if (PedestalDisplaySprite == null)
 		{
-			// Disable monitoring by default; only enabled during Active window
-			_hitArea.Monitoring = false;
-			_hitArea.BodyEntered += OnBodyEntered;
+			GD.PrintErr("Sword: could not find PedestalDisplaySprite");
+			return;
+		}
+		else
+		{
+			// Hide pedestal display sprite by default (weapons start equipped)
+			PedestalDisplaySprite.Visible = false;
 		}
 
 		// show hitboxes debug
@@ -449,4 +462,33 @@ public partial class Weapon : Node2D
 			}
 		}
 	}
+
+    public string GetItemName() => WeaponName;
+
+    public string GetItemDescription() => Description;
+
+	public AnimatedSprite2D GetDisplaySprite() => PedestalDisplaySprite;
+	public Vector2 GetDisplayScale()
+	{
+		// If we have a pedestal display sprite, use its configured scale
+		if (PedestalDisplaySprite != null)
+		{
+			return PedestalDisplayScale;
+		}
+		
+		// Otherwise, use a smaller scale for the main sprite to account for animation sizing
+		// Since weapons are typically scaled 7x for animations, we'll use 2x for pedestal display
+		return new Vector2(7f, 7f);
+	}
+
+    public bool CanSwapWith(IPedestalItem otherItem)
+    {
+        return otherItem == null || otherItem is Weapon;
+    }
+
+    public void OnPickedUp(PlayerController player)
+    {
+       // Possible effects to add on picked up
+    }
+
 }
