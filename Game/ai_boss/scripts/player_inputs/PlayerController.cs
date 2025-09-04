@@ -10,18 +10,19 @@ public partial class PlayerController : CharacterBody2D
 	private Node2D _handNode;
 
 	//---- Character Data ----
-	public byte Health { get; set; } = 100;
+	[Export] public float DamageReduction { get; set; } = 0f;
+	[Export] public byte Health { get; set; } = 100;
 	private const byte MaxHealth = 100;
-	public float DamageReduction { get; set; } = 0f;
 
 	//---- Movement Data ----
-	public float BaseSpeed { get; set; } = 500f; // normal speed
-	public float SpeedModifier { get; set; } = 1f; // speed modifier
-	public float DodgeSpeed { get; set; } = 1500f; // speed during dodge
+	[Export] public float BaseSpeed { get; set; } = 500f; // normal speed
+	[Export] public float SpeedModifier { get; set; } = 1f; // speed modifier
+	[Export] public float DodgeSpeed { get; set; } = 1500f; // speed during dodge
+	[Export] public float ChargeMoveModifier { get; set; } = .5f; // speed modifier during charge
 	private Vector2 _dodgeDirection = Vector2.Zero;
 
 	// direction leniency
-	public float DodgeInputLeniency { get; set; } = 0.05f; // seconds to wait for input
+	[Export]public float DodgeInputLeniency { get; set; } = 0.05f; // seconds to wait for input
 	private double _dodgeInputTimer = 0; // timer for input leniency for dodging
 
 	// facing direction
@@ -81,6 +82,7 @@ public partial class PlayerController : CharacterBody2D
 		return Input.GetVector("move_left", "move_right", "move_up", "move_down"); // get already normalized direction vector
 	}
 
+	// Update the player's facing direction based on input
 	void UpdateFacing(Vector2 inputDir)
 	{
 		_facing = inputDir;
@@ -107,50 +109,11 @@ public partial class PlayerController : CharacterBody2D
 		{
 			case PlayerState.Idle:
 			case PlayerState.Walking:
-				// Dodge starts on just-pressed regardless of whether there is movement
-				if (Input.IsActionJustPressed("dodge"))
-				{
-					_dodgeInputTimer = DodgeInputLeniency;
-					TransitionToState(PlayerState.DodgePrep);
-
-				}
-				else
-				{
-					// Normal movement -> walking vs idle
-					if (input.Length() > 0)
-						TransitionToState(PlayerState.Walking);
-					else
-						TransitionToState(PlayerState.Idle);
-				}
+				HandleIdleTransitions(input);
 				break;
 
 			case PlayerState.DodgePrep:
-
-				_dodgeInputTimer -= GetProcessDeltaTime();
-
-				// If player pressed any movement key *this frame*, accept the (combined) held input immediately
-				if (MovementJustPressed() != Vector2.Zero)
-				{
-					_dodgeDirection = ReadDirection();
-					TransitionToState(PlayerState.Dodge);
-					break;
-				}
-
-				// otherwise, wait for leniency timer to expire and then fall back to held direction or facing
-				if (_dodgeInputTimer <= 0)
-				{
-					// Sample input now so simultaneous presses are respected
-					Vector2 dodgeInput = ReadDirection();
-
-					if (dodgeInput == Vector2.Zero)
-					{
-						TransitionToState(PlayerState.Idle);
-						break;
-					}
-
-					_dodgeDirection = dodgeInput;
-					TransitionToState(PlayerState.Dodge);
-				}
+				HandleDodgePrepTransitions();
 				break;
 
 			case PlayerState.Dodge:
@@ -164,81 +127,116 @@ public partial class PlayerController : CharacterBody2D
 				break;
 
 			case PlayerState.Charging:
-				// Allow dodging while charging - this cancels the charge
-				if (Input.IsActionJustPressed("dodge"))
-				{
-					// GD.Print("Dodge input while charging - cancelling charge");
-					_equippedWeapon.CancelCharge();
-					_isChargingAttack = false;
-					_dodgeInputTimer = DodgeInputLeniency;
-					TransitionToState(PlayerState.DodgePrep);
-				}
+				HandleChargingTransitions();
 				break;
+		}
+	}
+
+	private void HandleIdleTransitions(Vector2 input)
+	{
+		// Dodge starts on just-pressed regardless of whether there is movement
+		if (Input.IsActionJustPressed("dodge"))
+		{
+			_dodgeInputTimer = DodgeInputLeniency;
+			TransitionToState(PlayerState.DodgePrep);
+
+		}
+		else
+		{
+			// Normal movement -> walking vs idle
+			if (input.Length() > 0)
+				TransitionToState(PlayerState.Walking);
+			else
+				TransitionToState(PlayerState.Idle);
+		}
+	}
+
+	private void HandleDodgePrepTransitions()
+	{
+		_dodgeInputTimer -= GetProcessDeltaTime();
+
+		// If player pressed any movement key *this frame*, accept the (combined) held input immediately
+		if (MovementJustPressed() != Vector2.Zero)
+		{
+			_dodgeDirection = ReadDirection();
+			TransitionToState(PlayerState.Dodge);
+			return;
+		}
+
+		// otherwise, wait for leniency timer to expire and then fall back to held direction or facing
+		if (_dodgeInputTimer <= 0)
+		{
+			// Sample input now so simultaneous presses are respected
+			Vector2 dodgeInput = ReadDirection();
+
+			if (dodgeInput == Vector2.Zero)
+			{
+				TransitionToState(PlayerState.Idle);
+				return;
+			}
+
+			_dodgeDirection = dodgeInput;
+			TransitionToState(PlayerState.Dodge);
+		}
+	}
+
+	private void HandleChargingTransitions()
+	{
+		// Allow dodging while charging - this cancels the charge
+		if (Input.IsActionJustPressed("dodge"))
+		{
+			// GD.Print("Dodge input while charging - cancelling charge");
+			_equippedWeapon.CancelCharge();
+			_isChargingAttack = false;
+			_dodgeInputTimer = DodgeInputLeniency;
+			TransitionToState(PlayerState.DodgePrep);
 		}
 	}
 
 	// --- Combat Input Handling -----------------
 	private void HandleCombatInput()
 	{
-		// Don't allow attacks while dodging, in dodge preparation, or already attacking
-		if (_state == PlayerState.Dodge || _state == PlayerState.DodgePrep)
+
+		switch (_state)
 		{
-			if (Input.IsActionJustPressed("light_attack") || Input.IsActionJustPressed("heavy_attack"))
-			{
-				// GD.Print($"Attack input blocked - Player state: {_state}");
-			}
+			// Don't allow attacks while dodging, in dodge preparation, or already attacking
+			case PlayerState.DodgePrep:
+			case PlayerState.Dodge:
+			case PlayerState.Attacking:
+				return;
 
-			return;
+			case PlayerState.Charging:
+				HandleChargingInput();
+				return;
 		}
-
-		// Handle charging state
-		if (_state == PlayerState.Charging)
-		{
-			HandleChargingInput();
-			return;
-		}
-
-		if (_state == PlayerState.Attacking)
-			return;
 
 		// Handle light attack input
 		if (Input.IsActionJustPressed("light_attack"))
 		{
-			// GD.Print("Light attack input received");
-			if (!_equippedWeapon.CanStartAttack(false)) return;
-
-			// Check if weapon has a chargeable light attack
-			if (_equippedWeapon.HasChargeableAttack(false))
-			{
-				// GD.Print("- Transitioning to Charging");
-				StartChargingAttack(false);
-			}
-			else
-			{
-				// GD.Print("- Transitioning to Attacking");
-				TransitionToState(PlayerState.Attacking);
-				OnLightAttack();
-			}
+			HandleAttackInput(false);
 		}
 		// Handle heavy attack input  
 		else if (Input.IsActionJustPressed("heavy_attack"))
 		{
-			// GD.Print("Heavy attack input received");
-			if (!_equippedWeapon.CanStartAttack(true)) return;
-			;
+			HandleAttackInput(true);
+		}
+	}
 
-			// Check if this weapon has a chargeable heavy attack
-			if (_equippedWeapon.HasChargeableAttack(true))
-			{
-				// GD.Print("- Transitioning to Charging");
-				StartChargingAttack(true);
-			}
-			else
-			{
-				// GD.Print("- Transitioning to Attacking");
-				TransitionToState(PlayerState.Attacking);
+	private void HandleAttackInput(bool isHeavy)
+	{
+		if (!_equippedWeapon.CanStartAttack(isHeavy)) return;
+
+		if (_equippedWeapon.HasChargeableAttack(isHeavy))
+		{
+			StartChargingAttack(isHeavy);
+		}
+		else
+		{
+			TransitionToState(PlayerState.Attacking);
+			if (isHeavy)
 				OnHeavyAttack();
-			}
+			else
+				OnLightAttack();
 		}
 	}
 
@@ -260,15 +258,12 @@ public partial class PlayerController : CharacterBody2D
 			// Button released - execute or cancel the charged attack
 			if (_equippedWeapon.CanReleaseCharge())
 			{
-				// GD.Print("Charge released successfully");
 				TransitionToState(PlayerState.Attacking);
 				ExecuteChargedAttack(_isHeavyCharge);
 			}
 			else
 			{
 				// Charge was too short, cancel and return to appropriate state
-				// GD.Print("Charge too short, cancelling charge");
-
 				_equippedWeapon.CancelCharge();
 				Vector2 currentInput = ReadDirection();
 				TransitionToState(currentInput.Length() > 0 ? PlayerState.Walking : PlayerState.Idle);
@@ -295,6 +290,8 @@ public partial class PlayerController : CharacterBody2D
 	private void TransitionToState(PlayerState next)
 	{
 		if (_state == next) return;
+
+		OnExitState(_state);
 		_prevState = _state;
 		_state = next;
 		OnEnterState(next);
@@ -306,28 +303,28 @@ public partial class PlayerController : CharacterBody2D
 		{
 			// play dodge animation; movement will be handled in ApplyMovementByState
 			case PlayerState.Dodge:
-				// GD.Print("Entering Dodge state");
 				// Set the sprite's flip based on direction
 				_sprite.FlipH = _dodgeDirection.X < 0 || _lastHorizontalFacing < 0;
-				_sprite.Play("dodge");
+				_sprite.Play(GetAnimationForState(s));
 				break;
 			case PlayerState.Walking:
-				// GD.Print("Entering Walking state");
 				// animation will be set in UpdateAnimationIfNeeded()
 				break;
 			case PlayerState.Idle:
-				// GD.Print("Entering Idle state");
 				// animation set later
 				break;
 			case PlayerState.Attacking:
-				// GD.Print("Entering Attacking state");
 				// animation will be triggered by weapon	
 				break;
 			case PlayerState.Charging:
-				// GD.Print("Entering Charging state");
 				// animation will be triggered by weapon
 				break;
 		}
+	}
+
+	private void OnExitState(PlayerState s)
+	{
+		return;
 	}
 
 	// --- Physics & movement ---------------------
@@ -342,7 +339,7 @@ public partial class PlayerController : CharacterBody2D
 				break;
 
 			case PlayerState.Attacking:
-			// allow movement while attacking (at reduced speed or full speed)
+				// allow movement while attacking
 			case PlayerState.Walking:
 				// move using input vector, speed and modifier
 				Velocity = input * BaseSpeed * SpeedModifier;
@@ -351,10 +348,6 @@ public partial class PlayerController : CharacterBody2D
 
 			case PlayerState.DodgePrep:
 				// stop movement while preparing to dodge
-				Velocity = Vector2.Zero;
-				MoveAndSlide();
-				break;
-
 			case PlayerState.Idle:
 				// stop movement
 				Velocity = Vector2.Zero;
@@ -363,8 +356,7 @@ public partial class PlayerController : CharacterBody2D
 
 			case PlayerState.Charging:
 				// allow movement while charging (at reduced speed or full speed)
-				float chargeMoveModifier = 0.5f; // e.g., half speed while charging
-				Velocity = ReadDirection() * BaseSpeed * chargeMoveModifier;
+				Velocity = input * BaseSpeed * ChargeMoveModifier;
 				MoveAndSlide();
 				break;
 		}
@@ -379,42 +371,55 @@ public partial class PlayerController : CharacterBody2D
 		// If we are in dodge or attacking, don't let other animations override
 		if (_state == PlayerState.Dodge || _state == PlayerState.Attacking)
 		{
-			_prevState = _state;
+			_prevState = _state; // just update prev state to avoid repeated checks
 			return;
 		}
 
-		// Determine animation for current state
-		if (_state == PlayerState.Walking)
-		{
-			_sprite.FlipH = _lastHorizontalFacing < 0;
-			if (stateChanged || _sprite.Animation != "walking")
-				_sprite.Play("walking");
-		}
-		else if (_state == PlayerState.Idle)
-		{
-			// keep flip from last horizontal input
-			if (stateChanged || _sprite.Animation != "idle")
-				_sprite.Play("idle");
-		}
-		else if (_state == PlayerState.Charging)
-		{
-			// While charging, play walking animation if moving, idle if stationary
-			Vector2 currentInput = ReadDirection();
-			_sprite.FlipH = _lastHorizontalFacing < 0;
+		bool IsMoving = !Mathf.IsEqualApprox(Velocity.Length(), 0);
 
-			if (currentInput.Length() > 0)
+		// Update sprite facing
+		_sprite.FlipH = _lastHorizontalFacing < 0;
+
+		// Set animation based on state
+		string targetAnimation;
+
+		if(_state == PlayerState.Charging)
+		{
+			if (IsMoving)
 			{
-				if (_sprite.Animation != "walking")
-					_sprite.Play("walking");
+				targetAnimation = "charge_walking";
 			}
 			else
 			{
-				if (_sprite.Animation != "idle")
-					_sprite.Play("idle");
+				targetAnimation = "charge_idle";
 			}
 		}
+		else
+		{
+			targetAnimation = GetAnimationForState(_state);
+		}
+		
 
+		if (stateChanged || _sprite.Animation != targetAnimation)
+		{
+			if (_sprite.SpriteFrames.HasAnimation(targetAnimation))
+				_sprite.Play(targetAnimation);
+		}
+			
 		_prevState = _state;
+	}
+
+	private string GetAnimationForState(PlayerState state)
+	{
+		return state switch
+		{
+			PlayerState.Dodge => "dodge",
+			PlayerState.Walking => "walking",
+			PlayerState.Idle => "idle",
+			PlayerState.Attacking => "attack",
+			PlayerState.Charging => "charge",
+			_ => null
+		};
 	}
 
 	// Called by AnimatedSprite2D when any animation completes
@@ -423,7 +428,7 @@ public partial class PlayerController : CharacterBody2D
 		// Get the name of the finished animation
 		var animName = _sprite.Animation;
 		// If dodge finished, end dodge and transit to Idle/Walking based on current input
-		if (animName == "dodge" && _state == PlayerState.Dodge)
+		if (animName == GetAnimationForState(PlayerState.Dodge) && _state == PlayerState.Dodge)
 		{
 			// decide whether to be walking or idle after dodge
 			Vector2 currentInput = ReadDirection();
@@ -434,6 +439,7 @@ public partial class PlayerController : CharacterBody2D
 		}
 	}
 
+	// ---- Weapon Logic ----
 	public void EquipWeapon(PackedScene weaponScene)
 	{
 		// If we reach this point, we have a new weapon to equip
@@ -465,6 +471,7 @@ public partial class PlayerController : CharacterBody2D
 		CallDeferred(nameof(CallEquipDeferred), weaponInstance);
 	}
 
+	// Called when equipping a new weapon
 	private void CallEquipDeferred(Weapon weapon)
 	{
 		weapon.Equip(this);
@@ -488,42 +495,32 @@ public partial class PlayerController : CharacterBody2D
 	// --- Weapon Signal Handlers ---------------
 	private void OnWeaponAttackStarted(string attackName)
 	{
-		// GD.Print($"Weapon attack started: {attackName}");
 		// Weapon attack has started, ensure we're in attacking state
 		if (_state != PlayerState.Attacking)
 		{
-			// GD.Print($"Player not in attacking state ({_state}), transitioning now");
 			TransitionToState(PlayerState.Attacking);
 		}
 	}
 
 	private void OnWeaponAttackEnded(string attackName)
 	{
-		// GD.Print($"Weapon attack ended: {attackName}, current player state: {_state}");
-
 		// Weapon attack has ended, return to appropriate state
 		if (_state == PlayerState.Attacking)
 		{
 			Vector2 currentInput = ReadDirection();
 			if (currentInput.Length() > 0)
 			{
-				// GD.Print("Transitioning from Attacking to Walking");
 				TransitionToState(PlayerState.Walking);
 			}
 
 			else
 			{
-				// GD.Print("Transitioning from Attacking to Idle");
 				TransitionToState(PlayerState.Idle);
 			}
 
 		}
-
-		else
-		{
-			// GD.Print($"Player was not in Attacking state when weapon ended attack (state: {_state})");
-		}
 	}
 
+	// ---- Getters ----
 	public PackedScene GetCurrentWeaponScene() => _equippedWeaponScene;
 }

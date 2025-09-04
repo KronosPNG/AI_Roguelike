@@ -184,7 +184,6 @@ collision_layer = 16
 collision_mask = 2
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="HitArea"]
-visible = false
 
 [node name="PedestalDisplaySprite" type="AnimatedSprite2D" parent="."]
 visible = false

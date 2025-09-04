@@ -1,43 +1,27 @@
-[gd_scene load_steps=15 format=3 uid="uid://d02snf7r66hnm"]
+[gd_scene load_steps=11 format=3 uid="uid://d1i3r7put3nix"]
 
-[ext_resource type="Script" uid="uid://07c5bmv6j10k" path="res://scripts/enemies/Dummy.cs" id="1_fj17u"]
-[ext_resource type="Texture2D" uid="uid://c0x4cfkw0sevv" path="res://art/animations/dummy/dummy-Sheet.png" id="1_khxps"]
+[ext_resource type="Script" uid="uid://07c5bmv6j10k" path="res://scripts/enemies/Dummy.cs" id="1_ssilh"]
+[ext_resource type="Texture2D" uid="uid://c0x4cfkw0sevv" path="res://art/animations/dummy/dummy-Sheet.png" id="2_sukyh"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fj17u"]
-atlas = ExtResource("1_khxps")
+atlas = ExtResource("2_sukyh")
 region = Rect2(0, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vlvhm"]
-atlas = ExtResource("1_khxps")
+atlas = ExtResource("2_sukyh")
 region = Rect2(24, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s5nu2"]
-atlas = ExtResource("1_khxps")
+atlas = ExtResource("2_sukyh")
 region = Rect2(48, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rigdy"]
-atlas = ExtResource("1_khxps")
+atlas = ExtResource("2_sukyh")
 region = Rect2(72, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4rn7n"]
-atlas = ExtResource("1_khxps")
+atlas = ExtResource("2_sukyh")
 region = Rect2(0, 0, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ruppt"]
-atlas = ExtResource("1_khxps")
-region = Rect2(96, 24, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vrg0s"]
-atlas = ExtResource("1_khxps")
-region = Rect2(72, 24, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3q80p"]
-atlas = ExtResource("1_khxps")
-region = Rect2(24, 24, 24, 24)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_aakqr"]
-atlas = ExtResource("1_khxps")
-region = Rect2(48, 24, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ruppt"]
 animations = [{
@@ -53,6 +37,9 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rigdy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fj17u")
 }],
 "loop": false,
 "name": &"hit",
@@ -65,38 +52,6 @@ animations = [{
 "loop": false,
 "name": &"idle",
 "speed": 0.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ruppt")
-}],
-"loop": false,
-"name": &"look_left_down",
-"speed": 0.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vrg0s")
-}],
-"loop": false,
-"name": &"look_left_up",
-"speed": 0.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3q80p")
-}],
-"loop": false,
-"name": &"look_right_down",
-"speed": 0.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_aakqr")
-}],
-"loop": false,
-"name": &"look_right_up",
-"speed": 0.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_khxps"]
@@ -105,25 +60,27 @@ size = Vector2(8, 15)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fj17u"]
 size = Vector2(10, 16)
 
-[node name="Dummy" type="CharacterBody2D"]
+[node name="Entity" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 7
-script = ExtResource("1_fj17u")
+script = ExtResource("1_ssilh")
 MaxHealth = 100.0
 IsInvulnerable = true
-BaseSpeed = 0.0
-AttackRange = 0.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(7, 7)
 sprite_frames = SubResource("SpriteFrames_ruppt")
-animation = &"look_left_up"
+animation = &"hit"
+frame = 4
+frame_progress = 1.0
 
 [node name="PhysicalCollision" type="CollisionShape2D" parent="."]
 visible = false
 position = Vector2(0, 3.5)
 scale = Vector2(7, 7)
 shape = SubResource("RectangleShape2D_khxps")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
 [node name="HitArea" type="Area2D" parent="."]
 scale = Vector2(7, 7)
@@ -134,5 +91,3 @@ collision_mask = 16
 visible = false
 shape = SubResource("RectangleShape2D_fj17u")
 debug_color = Color(0.533056, 0.411323, 1, 0.42)
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

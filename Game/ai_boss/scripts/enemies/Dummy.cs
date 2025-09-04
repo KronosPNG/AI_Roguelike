@@ -1,121 +1,142 @@
 using Godot;
 
-public partial class Dummy : StaticBody2D, IEntity
-{  
-	// ---- Node references ----
-	private AnimatedSprite2D _sprite;
-	private CollisionShape2D _collisionShape;
-	private Area2D _hitArea;
-
-	// ---- Health properties ----
-	public float CurrentHealth { get; private set; }
-	[Export] public float MaxHealth { get; private set; }
-	[Export] public bool IsInvulnerable { get; private set; }
-	public bool IsAlive => CurrentHealth > 0;
-
+public partial class Dummy : Entity, IEntity
+{
 	// ---- Visual properties ----
 	[Export] public bool FlipSpriteHorizontally = false;
 
 	public override void _Ready()
 	{
-		_sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
-		_collisionShape = GetNodeOrNull<CollisionShape2D>("PhysicalCollision");
-		_hitArea = GetNodeOrNull<Area2D>("HitArea");
-
-		if (_sprite == null)
-		{
-			GD.PrintErr("Sprite node not found");
-			return;
-		}
-
-		if (_collisionShape == null)
-		{
-			GD.PrintErr("PhysicalCollision node not found");
-			return;
-		}
-
-		if (_hitArea == null)
-		{
-			GD.PrintErr("HitArea node not found");
-			return;
-		}
+		base._Ready();
 
 		if (FlipSpriteHorizontally)
 		{
 			_sprite.FlipH = true;
 		}
-
-		CurrentHealth = MaxHealth;
 	}
 
-	public void ApplyDamage(float amount)
+	protected override void UpdateTimers(float delta)
 	{
-		if (!IsAlive) return;
+		_stateTimer += delta;
+	}
 
-		if (!IsInvulnerable) CurrentHealth -= amount;
-		
-		_sprite.Play("hit");
-		_sprite.Frame = 1;
+	protected override void UpdateAI(float delta)
+	{
+		// Find target (usually player)
+		if (_target == null)
+			_target = FindTarget();
+	}
 
-		GD.Print("Dummy took " + amount + " damage. Current Health: " + CurrentHealth);
+	protected override void UpdateAnimationIfNeeded()
+	{
+		if (_sprite == null) return;
 
-		if (CurrentHealth <= 0)
+		// For chasing state, don't use the default animation system
+		// The ChaseTarget method handles animations directly
+		if (_currentState == EntityState.Chasing)
 		{
-			CurrentHealth = 0;
-			Die();
+			return; // Let ChaseTarget handle the looking animations
+		}
+
+		// For other states, use the default animation system
+		string targetAnimation = GetAnimationForState(_currentState);
+
+		if (_sprite.Animation != targetAnimation)
+		{
+			if (_sprite.SpriteFrames.HasAnimation(targetAnimation))
+				_sprite.Play(targetAnimation);
 		}
 	}
 
-	public void ApplyStatusEffect(StatusEffectType effectType, float duration, float intensity = 1)
+	protected override void ApplyMovementByState(float delta)
 	{
-		throw new System.NotImplementedException();
-	}
-
-	public bool CanTakeDamageFrom(Node2D attacker)
-	{
-		throw new System.NotImplementedException();
-	}
-
-	public void Die()
-	{   
-		GD.Print("Dummy has died.");
-
-		CurrentHealth = 0;
-		_hitArea.Monitoring = false;
-		_sprite.Play("die");
-	}
-
-	public bool HasStatusEffect(StatusEffectType effectType)
-	{
-		throw new System.NotImplementedException();
-	}
-
-	public void Heal(float amount)
-	{
-		if (IsAlive)
+		if (_currentState == EntityState.Chasing)
 		{
-			CurrentHealth += amount;
-			if (CurrentHealth > MaxHealth) CurrentHealth = MaxHealth;
+			ChaseTarget();
+		}
+
+	}
+
+	protected override void HandleIdleTransitions()
+	{
+		if (CanSeeTarget())
+		{
+			TransitionToState(EntityState.Chasing);
 		}
 	}
-	
-	public void PlayDeathEffect()
+
+	protected override void HandleChasingTransitions()
 	{
-		throw new System.NotImplementedException();
+		if (!CanSeeTarget())
+		{
+			// Lost target, return to idle after a moment
+			if (_stateTimer > 2f)
+				TransitionToState(EntityState.Idle);
+			return;
+		}
 	}
 
-	public void PlayHitEffect(Vector2 hitPosition)
+	protected override void ChaseTarget()
 	{
-		throw new System.NotImplementedException();
+		// Dummy does not chase but follows with eyes
+		if (_target != null && IsInstanceValid(_target))
+		{
+			Vector2 direction = GlobalPosition.DirectionTo(_target.GlobalPosition);
+			string animationName = "look_";
+
+			// if player is to the left of dummy
+			// considering flip
+			if ((direction.X < 0 && !FlipSpriteHorizontally) || (direction.X > 0 && FlipSpriteHorizontally))
+			{
+				_facingDirection = Vector2.Left;
+				animationName += "left";
+			}
+			else
+			{
+				_facingDirection = Vector2.Right;
+				animationName += "right";
+			}
+
+			if(direction.Y <= 0)
+			{
+				animationName += "_up";
+			}
+			else
+			{
+				animationName += "_down";
+			}
+
+			// Play the appropriate animation
+			if (_sprite.SpriteFrames.HasAnimation(animationName))
+			{
+				_sprite.Play(animationName);
+			}
+		}
+		return;
 	}
 
-	public void RemoveStatusEffect(StatusEffectType effectType)
+	protected override void OnEnterState(EntityState state)
 	{
-		throw new System.NotImplementedException();
+		switch (state)
+		{
+			case EntityState.Chasing:
+				if (_target != null)
+					_lastKnownTargetPosition = _target.GlobalPosition;
+				break;
+
+			case EntityState.Hit:
+				_sprite.Play(GetAnimationForState(state));
+				break;
+		}
 	}
 
-	public void ShowDamageNumber(float damage)
+	protected override void GenerateWanderDirection()
 	{
-		throw new System.NotImplementedException();
+		return;
+	}
+
+	protected override void PerformAttack()
+	{
+		return;
 	}
 }
